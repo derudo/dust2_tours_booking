@@ -18,9 +18,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Path configurations
-const SCHEDULE_FILE = path.join(__dirname, 'schedule.json');
-const BOOKINGS_FILE = path.join(__dirname, 'bookings.json');
-const EMAIL_LOG_FILE = path.join(__dirname, 'sent_emails.log');
+const DATA_DIR = process.env.DATA_DIR || __dirname;
+
+// Ensure target data directory exists on startup
+if (!fs.existsSync(DATA_DIR)) {
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  } catch (err) {
+    console.error("Failed to initialize target data directory:", err);
+  }
+}
+
+const SCHEDULE_FILE = path.join(DATA_DIR, 'schedule.json');
+const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
+const EMAIL_LOG_FILE = path.join(DATA_DIR, 'sent_emails.log');
 
 // --- Helper Functions for File Database Operations ---
 
