@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Outer Badge Ring -->
+  <circle cx="250" cy="250" r="230" fill="none" stroke="#1A3322" stroke-width="12" />
+  <circle cx="250" cy="250" r="214" fill="none" stroke="#DDA5A5" stroke-width="4" stroke-dasharray="8 6" />
+  <circle cx="250" cy="250" r="200" fill="#FAF7F0" />
+
+  <!-- Center Retro Globe Grid -->
+  <g opacity="0.15">
+    <circle cx="250" cy="250" r="140" fill="none" stroke="#1A3322" stroke-width="3" />
+    <path d="M 110 250 H 390" stroke="#1A3322" stroke-width="3" fill="none" />
+    <path d="M 250 110 V 390" stroke="#1A3322" stroke-width="3" fill="none" />
+    <path d="M 130 190 Q 250 220 370 190" stroke="#1A3322" stroke-width="3" fill="none" />
+    <path d="M 130 310 Q 250 280 370 310" stroke="#1A3322" stroke-width="3" fill="none" />
+    <path d="M 190 130 Q 220 250 190 370" stroke="#1A3322" stroke-width="3" fill="none" />
+    <path d="M 310 130 Q 280 250 310 370" stroke="#1A3322" stroke-width="3" fill="none" />
+  </g>
+
+  <!-- Travel Agency Stars -->
+  <g fill="#DDA5A5">
+    <polygon points="250,75 253,85 263,85 255,91 258,101 250,95 242,101 245,91 237,85 247,85" />
+    <polygon points="120,250 123,260 133,260 125,266 128,276 120,270 112,276 115,266 107,260 117,260" />
+    <polygon points="380,250 383,260 393,260 385,266 388,276 380,270 372,276 375,266 367,260 377,260" />
+  </g>
+
+  <!-- Circular Text Paths -->
+  <defs>
+    <path id="textPathTop" d="M 80 250 A 170 170 0 0 1 420 250" fill="none" />
+    <path id="textPathBottom" d="M 420 250 A 170 170 0 0 1 80 250" fill="none" />
+  </defs>
+
+  <!-- Curved Typography -->
+  <text font-family="'Anton', Impact, sans-serif" font-size="42" fill="#1A3322" letter-spacing="4" text-anchor="middle">
+    <textPath href="#textPathTop" startOffset="50%">• DUST2 TOURS AGENCY •</textPath>
+  </text>
+  <text font-family="'DM Sans', sans-serif" font-size="20" font-weight="bold" fill="#8C8070" letter-spacing="6" text-anchor="middle">
+    <textPath href="#textPathBottom" startOffset="50%">ESTABLISHED 2026</textPath>
+  </text>
+
+  <!-- Center Graphics: Vintage Plane / Map Pins -->
+  <g transform="translate(180, 175) scale(0.28)" fill="#1A3322">
+    <!-- Traditional Map Silhouette / Globe Icon -->
+    <path d="M250,0 C111.93,0 0,111.93 0,250 C0,388.07 111.93,500 250,500 C388.07,500 500,388.07 500,250 C500,111.93 388.07,0 250,0 Z M250,450 C139.72,450 50,360.28 50,250 C50,139.72 139.72,50 250,50 C360.28,50 450,139.72 450,250 C450,360.28 360.28,450 250,450 Z" />
+    <!-- Airplane Silhouette representing tourism -->
+    <path d="M375,230 L270,230 L160,110 L120,110 L170,230 L95,230 L65,190 L35,190 L55,250 L35,310 L65,310 L95,270 L170,270 L120,390 L160,390 L270,270 L375,270 C396.54,270 415,252.09 415,250 C415,247.91 396.54,230 375,230 Z" />
+  </g>
+  
+  <!-- Retro Compass Rose -->
+  <polygon points="250,195 255,235 250,240 245,235" fill="#DDA5A5" stroke="#1A3322" stroke-width="2" />
+  <polygon points="250,305 255,265 250,260 245,265" fill="#DDA5A5" stroke="#1A3322" stroke-width="2" />
+  <polygon points="195,250 235,255 240,250 235,245" fill="#DDA5A5" stroke="#1A3322" stroke-width="2" />
+  <polygon points="305,250 265,255 260,250 265,245" fill="#DDA5A5" stroke="#1A3322" stroke-width="2" />
+  <circle cx="250" cy="250" r="8" fill="#1A3322" />
+</svg>
