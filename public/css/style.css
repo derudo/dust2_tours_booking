@@ -1,36 +1,40 @@
 /* ==========================================================================
-   CSS DESIGN SYSTEM - DUST2 TOURS AGENCY (TRADITIONAL TRAVEL AGENCY EST.)
-   No Glassmorphism • Elegant Print Brochure Aesthetic • Traditional Layouts
+   CSS DESIGN SYSTEM - DUST2 TOURS AGENCY (GREEN ON DUSTY PINK)
+   Classic Travel Brochure • Rich Organic Vignettes • Dotted Postage Seals
    ========================================================================== */
 
 /* Variables & Theme Tokens */
 :root {
-  /* Harmonious Vintage Palette */
-  --bg-cream: #FAF7F0;          /* Warm Ivory/Sand paper */
-  --primary-green: #1A3322;     /* Rich deep forest green */
-  --primary-green-light: #2A4833;
-  --accent-pink: #DDA5A5;       /* Muted dusty pink for active triggers */
-  --accent-pink-dark: #C68B8B;  /* Deeper dusty rose for hover states */
-  --accent-pink-light: #F3D9D9; /* Very soft rose highlights */
-  --text-dark: #1A3322;         /* High-contrast brand typography */
-  --text-muted: #8C8070;        /* Retro warm-gray text */
-  --border-color: #1A3322;      /* Elegant thin ink borders */
+  /* Rich Green-on-Dusty-Pink Harmony */
+  --bg-dusty-pink: #F3E3E0;      /* Rich, soft dusty pink base page background */
+  --bg-cream: #FAF6F4;           /* Warm ivory cream for card contrasts */
+  --primary-green: #1A3322;      /* Elegant deep ink forest green */
+  --primary-green-light: #2D4C36;
+  --accent-pink: #DDA5A5;        /* Medium dusty pink highlights */
+  --accent-pink-dark: #C48E8E;   /* Deeper muted rose for interactive cues */
+  --accent-pink-light: #FCECE9;  /* Softest blush pink details */
+  
+  --text-dark: #1A3322;          /* Rich ink brand color */
+  --text-muted: #7A6F62;         /* Vintage warm grey */
+  --border-color: #1A3322;       /* High-contrast ink border */
   
   /* Fonts */
   --font-headings: 'Anton', Impact, sans-serif;
-  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   
-  /* Shadows & Layouts (No neon glows, traditional borders) */
-  --shadow-retro: 4px 4px 0px 0px #1A3322;
+  /* Vintage Shadows & Borders */
+  --shadow-retro: 5px 5px 0px 0px #1A3322;
   --shadow-retro-hover: 8px 8px 0px 0px #1A3322;
-  --shadow-retro-pink: 4px 4px 0px 0px #DDA5A5;
+  --shadow-retro-pink: 5px 5px 0px 0px #DDA5A5;
   --border-thin: 1px solid #1A3322;
   --border-thick: 3px solid #1A3322;
+  --border-double: 4px double #1A3322;
   --border-dashed: 2px dashed #1A3322;
 }
 
-/* Document & Base Styles */
+/* Base Styles */
 * {
+  box-index: border-box;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -42,20 +46,20 @@ html {
 }
 
 body {
-  background-color: var(--bg-cream);
+  background-color: var(--bg-dusty-pink); /* Dusty Pink as main page background! */
   color: var(--text-dark);
   font-family: var(--font-body);
   line-height: 1.6;
   padding-bottom: 0;
 }
 
-/* Typography elements */
+/* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-headings);
   font-weight: normal;
   text-transform: uppercase;
   letter-spacing: 1px;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 a {
@@ -63,11 +67,21 @@ a {
   text-decoration: none;
 }
 
-input, button, select, textarea {
-  font-family: inherit;
+/* Vintage Double-Line Page Wrapper Decor */
+body::before {
+  content: "";
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: var(--border-thin);
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.15;
 }
 
-/* Vintage Decorative Dividers */
+/* Beautiful Print Dividers */
 .vintage-divider {
   display: flex;
   align-items: center;
@@ -85,12 +99,12 @@ input, button, select, textarea {
 }
 .vintage-divider .divider-diamond {
   content: "";
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   background-color: var(--accent-pink);
   border: 2px solid var(--primary-green);
   transform: rotate(45deg);
-  margin: 0 15px;
+  margin: 0 12px;
 }
 .vintage-divider.mini {
   margin: 15px auto;
@@ -98,17 +112,17 @@ input, button, select, textarea {
 }
 
 /* ==========================================================================
-   NAVIGATION & HEADER
+   NAVIGATION & HEADER (Green base with Dusty Pink elements)
    ========================================================================== */
 .main-header {
   background-color: var(--primary-green);
   color: var(--bg-cream);
   border-bottom: var(--border-thick);
-  padding: 15px 0;
+  padding: 18px 0;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 15px rgba(26,51,34,0.1);
+  box-shadow: 0 4px 20px rgba(26,51,34,0.15);
 }
 
 .header-container {
@@ -127,12 +141,14 @@ input, button, select, textarea {
 }
 
 .logo-wrapper {
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  border: 2px solid var(--bg-cream);
-  padding: 2px;
+  border: var(--border-thick);
+  border-color: var(--accent-pink);
+  padding: 1px;
   background-color: var(--bg-cream);
+  overflow: hidden;
 }
 #main-logo-svg {
   width: 100%;
@@ -141,12 +157,12 @@ input, button, select, textarea {
 }
 
 .brand-titles .agency-title {
-  font-size: 24px;
+  font-size: 26px;
   letter-spacing: 2px;
   color: var(--bg-cream);
 }
 .brand-titles .agency-tagline {
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 3px;
   color: var(--accent-pink);
@@ -168,6 +184,7 @@ input, button, select, textarea {
   position: relative;
   padding: 8px 0;
   transition: color 0.3s ease;
+  color: var(--bg-cream);
 }
 .nav-item::after {
   content: "";
@@ -189,46 +206,46 @@ input, button, select, textarea {
 .admin-portal-btn {
   background-color: var(--accent-pink);
   color: var(--primary-green);
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 4px;
-  border: var(--border-thin);
-  transition: all 0.3s ease;
+  border: var(--border-thick);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .admin-portal-btn:hover {
   background-color: var(--bg-cream);
   color: var(--primary-green);
   border-color: var(--bg-cream);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 .admin-portal-btn::after {
   display: none;
 }
 
 /* ==========================================================================
-   HERO / WELCOME BANNER
+   HERO BANNER
    ========================================================================== */
 .hero-banner {
   background-color: var(--primary-green);
   color: var(--bg-cream);
   text-align: center;
-  padding: 80px 24px;
+  padding: 90px 24px;
   position: relative;
-  overflow: hidden;
   border-bottom: var(--border-thick);
 }
 
-.hero-banner::before {
-  content: "";
+/* Postcard Cancellation Stamp Backdrops (Flair!) */
+.hero-banner::after {
+  content: "DUST2 TOURS";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0.05;
-  background-image: radial-gradient(var(--bg-cream) 20%, transparent 20%),
-                    radial-gradient(var(--bg-cream) 20%, transparent 20%);
-  background-size: 12px 12px;
-  background-position: 0 0, 6px 6px;
+  right: 5%;
+  bottom: 10%;
+  font-family: var(--font-headings);
+  font-size: 80px;
+  color: rgba(221, 165, 165, 0.04);
+  transform: rotate(-15deg);
+  pointer-events: none;
+  letter-spacing: 5px;
 }
 
 .hero-content {
@@ -242,19 +259,20 @@ input, button, select, textarea {
   display: inline-block;
   background-color: var(--accent-pink);
   color: var(--primary-green);
-  padding: 4px 12px;
+  padding: 5px 16px;
   font-size: 11px;
   font-weight: bold;
   letter-spacing: 2px;
   text-transform: uppercase;
-  border-radius: 20px;
+  border-radius: 4px;
   margin-bottom: 24px;
-  border: 1px solid var(--primary-green);
+  border: var(--border-thick);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
 }
 
 .hero-headline {
-  font-size: 48px;
-  letter-spacing: 3px;
+  font-size: 52px;
+  letter-spacing: 2px;
   line-height: 1.05;
   margin-bottom: 24px;
   color: var(--bg-cream);
@@ -262,10 +280,9 @@ input, button, select, textarea {
 
 .hero-subtext {
   font-size: 16px;
-  color: #D6E4DB;
-  max-width: 650px;
+  color: #D3E5D9;
+  max-width: 680px;
   margin: 0 auto 30px auto;
-  font-family: var(--font-body);
 }
 
 /* ==========================================================================
@@ -279,45 +296,42 @@ input, button, select, textarea {
 
 .section-header {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 60px;
 }
 
 .section-subtitle {
-  font-family: var(--font-body);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 4px;
-  color: var(--text-muted);
+  color: var(--text-dark);
   font-weight: bold;
   display: block;
   margin-bottom: 8px;
+  opacity: 0.7;
 }
 
 .section-title {
-  font-size: 36px;
-  letter-spacing: 2px;
+  font-size: 38px;
+  letter-spacing: 1px;
   color: var(--primary-green);
-  position: relative;
-  display: inline-block;
-  padding-bottom: 12px;
 }
 
 .section-desc {
   font-size: 15px;
   color: var(--text-muted);
-  max-width: 500px;
+  max-width: 520px;
   margin: 8px auto 0 auto;
 }
 
 /* Card layout grid */
 .schedule-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 36px;
   min-height: 250px;
 }
 
-/* Traditional Postcard / Brochure Card Design */
+/* Traditional Brochure Postcard Cards (Ivory Cream fill) */
 .tour-card {
   background-color: var(--bg-cream);
   border: var(--border-thick);
@@ -330,54 +344,61 @@ input, button, select, textarea {
   position: relative;
 }
 
+/* Stamp border inlay effect */
 .tour-card::after {
   content: "";
   position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
   border: var(--border-thin);
+  border-color: rgba(26, 51, 34, 0.2);
   pointer-events: none;
-  opacity: 0.3;
   border-radius: 4px;
 }
 
 .tour-card:hover {
-  transform: translate(-4px, -4px);
+  transform: translate(-5px, -5px);
   box-shadow: var(--shadow-retro-hover);
 }
 
 .tour-card-header {
-  padding: 24px 24px 12px 24px;
+  padding: 28px 24px 16px 24px;
   border-bottom: var(--border-dashed);
   position: relative;
+  background-color: #FFF; /* solid contrast */
+}
+
+/* Retro Stamp Graphic (Flair!) */
+.tour-card-header::before {
+  content: "APPROVED";
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  border: 2px dashed var(--accent-pink-dark);
+  color: var(--accent-pink-dark);
+  font-family: var(--font-headings);
+  font-size: 11px;
+  padding: 2px 8px;
+  transform: rotate(8deg);
+  border-radius: 2px;
+  letter-spacing: 1px;
+  font-weight: bold;
+  opacity: 0.6;
 }
 
 .tour-title {
-  font-size: 22px;
+  font-size: 24px;
   letter-spacing: 0.5px;
   color: var(--primary-green);
   margin-bottom: 8px;
-  height: 52px;
+  max-width: 78%; /* leave room for stamp */
+  height: 56px;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-}
-
-.tour-price-badge {
-  position: absolute;
-  top: 0;
-  right: 24px;
-  background-color: var(--primary-green);
-  color: var(--bg-cream);
-  padding: 6px 12px;
-  font-family: var(--font-headings);
-  font-size: 16px;
-  border-radius: 0 0 4px 4px;
-  border: var(--border-thin);
-  border-top: none;
 }
 
 .tour-meta-list {
@@ -389,14 +410,9 @@ input, button, select, textarea {
   letter-spacing: 0.5px;
   color: var(--text-muted);
 }
-.tour-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
 
 .tour-card-body {
-  padding: 20px 24px;
+  padding: 24px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -404,49 +420,44 @@ input, button, select, textarea {
 
 .tour-description {
   font-size: 14px;
-  color: #4C5E50;
-  line-height: 1.5;
-  margin-bottom: 20px;
+  color: #4C5A4F;
+  line-height: 1.55;
+  margin-bottom: 24px;
   flex-grow: 1;
 }
 
-/* Highlights Dusty Pink Background as request: "also dusty pink may serve as background" */
+/* Rich Dusty Pink background for capacity cards! */
 .tour-capacity-banner {
-  background-color: var(--accent-pink-light); /* soft pink */
-  border: 1px solid var(--accent-pink);
-  border-radius: 4px;
-  padding: 10px 16px;
-  margin-bottom: 20px;
+  background-color: var(--accent-pink); /* solid dusty pink background! */
+  border: var(--border-thick);
+  border-radius: 6px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.06);
 }
-/* Fully Booked state using accent dusty pink as base background */
 .tour-capacity-banner.fully-booked {
-  background-color: var(--accent-pink);
-  border-color: var(--accent-pink-dark);
+  background-color: var(--text-muted);
+  border-color: var(--primary-green);
 }
 
 .capacity-label {
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   font-weight: bold;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   color: var(--primary-green);
 }
 .capacity-status {
   font-family: var(--font-headings);
-  font-size: 18px;
+  font-size: 20px;
   letter-spacing: 0.5px;
   color: var(--primary-green);
 }
-.fully-booked .capacity-label,
-.fully-booked .capacity-status {
-  color: var(--primary-green);
-  font-weight: bold;
-}
 
-/* Button UI */
+/* Solid ink-bordered primary buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -455,14 +466,15 @@ input, button, select, textarea {
   font-size: 13px;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 12px 24px;
+  letter-spacing: 1.5px;
+  padding: 14px 28px;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: var(--border-thick);
 }
 
+/* Dusty Pink background for primary button */
 .btn-primary {
   background-color: var(--accent-pink);
   color: var(--primary-green);
@@ -470,41 +482,43 @@ input, button, select, textarea {
 }
 .btn-primary:hover:not(:disabled) {
   background-color: var(--accent-pink-dark);
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px var(--primary-green);
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0px 0px var(--primary-green);
 }
 .btn-primary:active:not(:disabled) {
   transform: translate(0, 0);
   box-shadow: 2px 2px 0px 0px var(--primary-green);
 }
 .btn-primary:disabled {
-  background-color: #E2DDD5;
-  border-color: #A39B8E;
-  color: #A39B8E;
+  background-color: #DDD4D1;
+  border-color: #9E918E;
+  color: #9E918E;
   box-shadow: none;
   cursor: not-allowed;
 }
 
+/* Deep Green background for secondary button */
 .btn-secondary {
-  background-color: var(--bg-cream);
-  color: var(--primary-green);
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
   border-color: var(--primary-green);
 }
 .btn-secondary:hover {
-  background-color: #EDE8DD;
+  background-color: var(--primary-green-light);
+  color: #FFF;
 }
 
 .btn-danger {
-  background-color: #F0A5A5;
-  color: #5C1E1E;
-  border-color: #5C1E1E;
+  background-color: #E27B7B;
+  color: #1A3322;
+  border-color: var(--primary-green);
 }
 .btn-danger:hover {
-  background-color: #E68B8B;
+  background-color: #D35E5E;
 }
 
 .btn-sm {
-  padding: 6px 12px;
+  padding: 8px 16px;
   font-size: 11px;
   border-width: 2px;
 }
@@ -522,13 +536,13 @@ input, button, select, textarea {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(26, 51, 34, 0.7);
+  background-color: rgba(26, 51, 34, 0.75);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 200;
   padding: 24px;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
 }
 .modal-overlay.active {
   display: flex;
@@ -537,12 +551,12 @@ input, button, select, textarea {
 
 .modal-card {
   background-color: var(--bg-cream);
-  border: var(--border-thick);
+  border: var(--border-double);
   border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.3);
   max-width: 500px;
   width: 100%;
-  padding: 36px;
+  padding: 40px;
   position: relative;
   animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
 }
@@ -553,7 +567,7 @@ input, button, select, textarea {
   right: 20px;
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 32px;
   line-height: 1;
   color: var(--primary-green);
   cursor: pointer;
@@ -576,9 +590,9 @@ input, button, select, textarea {
   margin-bottom: 6px;
 }
 .modal-title {
-  font-size: 28px;
+  font-size: 30px;
   color: var(--primary-green);
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 .modal-tour-meta {
   font-size: 13px;
@@ -588,11 +602,11 @@ input, button, select, textarea {
 
 /* Forms layout */
 .booking-form {
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .form-group {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .form-row-split {
@@ -613,19 +627,18 @@ input, button, select, textarea {
 
 .form-input {
   width: 100%;
-  background-color: #FAF7F0;
-  border: var(--border-thin);
+  background-color: #FFF;
+  border: var(--border-thick);
   border-radius: 4px;
-  padding: 10px 14px;
+  padding: 11px 14px;
   font-size: 14px;
   color: var(--text-dark);
   transition: all 0.2s ease;
 }
 .form-input:focus {
   outline: none;
-  border-color: var(--accent-pink-dark);
-  box-shadow: 0 0 0 3px rgba(221,165,165,0.3);
-  background-color: #FFF;
+  border-color: var(--accent-pink);
+  box-shadow: 0 0 0 4px rgba(221,165,165,0.25);
 }
 .form-input.text-area {
   resize: vertical;
@@ -641,13 +654,14 @@ input, button, select, textarea {
 
 .capacity-warning-badge {
   background-color: var(--accent-pink-light);
-  border: 1px solid var(--accent-pink);
+  border: var(--border-thin);
+  border-color: var(--accent-pink);
   border-radius: 4px;
   color: #8C4040;
   font-size: 11px;
   font-weight: bold;
   text-align: center;
-  padding: 8px 12px;
+  padding: 10px 12px;
   margin-bottom: 20px;
 }
 
@@ -655,7 +669,7 @@ input, button, select, textarea {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  margin-top: 24px;
+  margin-top: 28px;
 }
 
 /* ==========================================================================
@@ -673,17 +687,17 @@ input, button, select, textarea {
 
 .ticket-card {
   display: flex;
-  background-color: var(--accent-pink); /* Dusty Pink as ticket background! */
+  background-color: var(--accent-pink); /* Solid Dusty Pink ticket background! */
   border: var(--border-thick);
   border-radius: 8px;
-  box-shadow: 0 15px 45px rgba(26,51,34,0.35);
+  box-shadow: 0 20px 50px rgba(26,51,34,0.4);
   width: 100%;
   position: relative;
   overflow: hidden;
   color: var(--primary-green);
 }
 
-/* Tear off dashed divider line representing luggage tag stub */
+/* Dotted tear-off line */
 .ticket-card::before {
   content: "";
   position: absolute;
@@ -694,26 +708,26 @@ input, button, select, textarea {
   z-index: 10;
 }
 
-/* Outer notch cuts on ticket edges representing retro tickets */
+/* Notches representation */
 .ticket-card::after {
   content: "";
   position: absolute;
-  right: 190px;
-  top: -12px;
+  right: 188px;
+  top: -14px;
   width: 24px;
   height: 24px;
-  background-color: rgba(26, 51, 34, 0.7); /* match overlay */
+  background-color: rgba(26, 51, 34, 0.75);
   border-radius: 50%;
   border: var(--border-thick);
   z-index: 10;
 }
 .ticket-card .stub-notch-bottom {
   position: absolute;
-  right: 190px;
-  bottom: -12px;
+  right: 188px;
+  bottom: -14px;
   width: 24px;
   height: 24px;
-  background-color: rgba(26, 51, 34, 0.7);
+  background-color: rgba(26, 51, 34, 0.75);
   border-radius: 50%;
   border: var(--border-thick);
   z-index: 10;
@@ -722,7 +736,7 @@ input, button, select, textarea {
 /* Ticket Main Section */
 .ticket-main {
   flex-grow: 1;
-  padding: 30px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -732,8 +746,8 @@ input, button, select, textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px dashed rgba(26,51,34,0.2);
-  padding-bottom: 15px;
+  border-bottom: 2px dashed rgba(26,51,34,0.25);
+  padding-bottom: 16px;
 }
 
 .ticket-logo-section {
@@ -742,12 +756,12 @@ input, button, select, textarea {
   gap: 12px;
 }
 .ticket-mini-logo {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
 }
 .ticket-agency-name {
   font-family: var(--font-headings);
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1;
   letter-spacing: 1px;
 }
@@ -763,16 +777,16 @@ input, button, select, textarea {
   position: relative;
 }
 .vintage-stamp {
-  border: 3px double #8C4040;
+  border: 4px double #8C4040;
   color: #8C4040;
   font-family: var(--font-headings);
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 2px;
-  padding: 4px 12px;
+  padding: 4px 14px;
   border-radius: 4px;
-  transform: rotate(-8deg);
+  transform: rotate(-10deg);
   font-weight: bold;
-  opacity: 0.75;
+  opacity: 0.8;
   text-transform: uppercase;
 }
 
@@ -785,7 +799,7 @@ input, button, select, textarea {
 .ticket-column {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .ticket-row-split {
@@ -807,7 +821,7 @@ input, button, select, textarea {
 }
 .ticket-value {
   font-family: var(--font-headings);
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
@@ -815,10 +829,11 @@ input, button, select, textarea {
   background-color: var(--primary-green);
   color: var(--bg-cream);
   display: inline-block;
-  padding: 1px 8px;
+  padding: 2px 10px;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 13px;
   width: fit-content;
+  letter-spacing: 1px;
 }
 .ticket-value.monospace {
   font-family: monospace;
@@ -829,8 +844,8 @@ input, button, select, textarea {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-top: 2px dashed rgba(26,51,34,0.2);
-  padding-top: 15px;
+  border-top: 2px dashed rgba(26,51,34,0.25);
+  padding-top: 16px;
   margin-top: auto;
 }
 
@@ -841,7 +856,7 @@ input, button, select, textarea {
 }
 .classic-barcode {
   display: flex;
-  height: 32px;
+  height: 34px;
   align-items: stretch;
 }
 .classic-barcode span {
@@ -866,23 +881,23 @@ input, button, select, textarea {
 .ticket-fineprint {
   font-size: 8px;
   color: var(--primary-green-light);
-  max-width: 280px;
-  line-height: 1.2;
+  max-width: 290px;
+  line-height: 1.25;
   text-align: right;
 }
 
 /* Tear-off Stub Section */
 .ticket-stub {
   width: 200px;
-  padding: 30px 20px;
-  background-color: rgba(26,51,34,0.04); /* visual offset */
+  padding: 32px 20px;
+  background-color: rgba(26,51,34,0.05); /* visual offset */
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 .stub-header {
-  border-bottom: 2px dashed rgba(26,51,34,0.2);
+  border-bottom: 2px dashed rgba(26,51,34,0.25);
   padding-bottom: 8px;
   font-family: var(--font-headings);
   font-size: 12px;
@@ -900,7 +915,7 @@ input, button, select, textarea {
 }
 
 .ticket-value.compact {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .stub-stamp {
@@ -916,7 +931,7 @@ input, button, select, textarea {
   font-size: 14px;
   letter-spacing: 1px;
   transform: rotate(15deg);
-  opacity: 0.6;
+  opacity: 0.7;
   margin-left: auto;
 }
 
@@ -933,7 +948,7 @@ input, button, select, textarea {
    ADMINISTRATOR DASHBOARD LAYOUT
    ========================================================================== */
 .admin-body {
-  background-color: #FAF7F0;
+  background-color: var(--bg-dusty-pink); /* Dusty pink background! */
 }
 
 .admin-header {
@@ -958,7 +973,7 @@ input, button, select, textarea {
   padding: 40px 24px 80px 24px;
 }
 
-/* Stats Overview Cards */
+/* Stats Overview Cards (Ivory Cream base, thick green borders) */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -977,22 +992,21 @@ input, button, select, textarea {
 }
 .stat-card.highlight {
   background-color: var(--accent-pink);
-  box-shadow: var(--shadow-retro-pink);
 }
 
 .stat-label {
   font-size: 11px;
   font-weight: bold;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   color: var(--text-muted);
 }
 .stat-card.highlight .stat-label {
-  color: var(--primary-green-light);
+  color: var(--primary-green);
 }
 
 .stat-value {
   font-family: var(--font-headings);
-  font-size: 36px;
+  font-size: 38px;
   color: var(--primary-green);
   line-height: 1.1;
   margin: 6px 0;
@@ -1021,7 +1035,7 @@ input, button, select, textarea {
   background-color: var(--bg-cream);
   border: var(--border-thick);
   border-radius: 8px;
-  padding: 30px;
+  padding: 32px;
   box-shadow: var(--shadow-retro);
   position: relative;
 }
@@ -1036,7 +1050,7 @@ input, button, select, textarea {
 }
 
 .panel-title {
-  font-size: 24px;
+  font-size: 26px;
   color: var(--primary-green);
 }
 .panel-subtitle {
@@ -1050,7 +1064,7 @@ input, button, select, textarea {
   gap: 12px;
 }
 
-/* Manifest Filters Bar */
+/* Filters Bar */
 .manifest-filters {
   display: flex;
   gap: 16px;
@@ -1075,7 +1089,7 @@ input, button, select, textarea {
   border-collapse: collapse;
   text-align: left;
   font-size: 13px;
-  background-color: #FAF7F0;
+  background-color: #FFF;
 }
 
 .ledger-table th {
@@ -1091,6 +1105,7 @@ input, button, select, textarea {
 .ledger-table td {
   padding: 14px 16px;
   border-bottom: var(--border-thin);
+  border-bottom-color: rgba(26,51,34,0.1);
   vertical-align: middle;
 }
 
@@ -1099,7 +1114,7 @@ input, button, select, textarea {
 }
 
 .ledger-table tbody tr:hover td {
-  background-color: #FAF2E3;
+  background-color: var(--accent-pink-light); /* Hover highlights in soft pink */
 }
 
 /* Detail items in table cell */
@@ -1163,7 +1178,6 @@ input, button, select, textarea {
   background-color: white;
   transition: .3s;
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 input:checked + .toggle-slider {
   background-color: var(--primary-green);
@@ -1196,21 +1210,21 @@ input:checked + .toggle-slider:before {
 }
 
 .editor-tour-item {
-  border: 2px solid var(--primary-green);
+  border: var(--border-thick);
   border-radius: 6px;
-  padding: 16px;
-  background-color: #FAF7F0;
+  padding: 18px;
+  background-color: #FFF;
   position: relative;
 }
-/* Active items or items being edited could have a pink highlight backdrop */
+/* Visual changed configurations background is set to dusty pink! */
 .editor-tour-item.changed {
   background-color: var(--accent-pink-light);
-  border-color: var(--accent-pink-dark);
+  border-color: var(--accent-pink);
 }
 
 .editor-tour-title {
   font-family: var(--font-headings);
-  font-size: 18px;
+  font-size: 20px;
   color: var(--primary-green);
   margin-bottom: 6px;
 }
@@ -1223,9 +1237,9 @@ input:checked + .toggle-slider:before {
 }
 .editor-tour-desc {
   font-size: 12px;
-  color: #555;
-  line-height: 1.4;
-  margin-bottom: 12px;
+  color: #4C5A4F;
+  line-height: 1.45;
+  margin-bottom: 14px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1243,7 +1257,7 @@ input:checked + .toggle-slider:before {
   color: var(--bg-cream);
   font-size: 10px;
   font-weight: bold;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 12px;
 }
 
@@ -1319,11 +1333,13 @@ input:checked + .toggle-slider:before {
 }
 
 .footer-badge-logo {
-  width: 60px;
-  height: 60px;
+  width: 62px;
+  height: 62px;
   border-radius: 50%;
   background-color: var(--bg-cream);
-  padding: 3px;
+  padding: 2px;
+  border: var(--border-thick);
+  border-color: var(--accent-pink);
   margin-bottom: 8px;
 }
 .footer-badge-logo img {
@@ -1333,7 +1349,7 @@ input:checked + .toggle-slider:before {
 
 .main-footer p {
   font-size: 13px;
-  color: #D6E4DB;
+  color: #D3E5D9;
 }
 
 .main-footer .footer-subtext {

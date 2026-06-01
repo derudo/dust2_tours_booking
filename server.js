@@ -108,9 +108,50 @@ function enqueueBookingTask(taskFn) {
 }
 
 // --- Email Dispatch & Logging System ---
+let mailTransporter = null;
+
+async function initMailer() {
+  if (
+    process.env.SMTP_HOST &&
+    process.env.SMTP_USER &&
+    process.env.SMTP_PASS
+  ) {
+    mailTransporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_PORT === '465',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+    console.log(`[SMTP Mailer] Production SMTP Mailer configured successfully.`);
+  } else {
+    // Dynamic fallback: Create a free Ethereal test account so that email confirmations WORK instantly out of the box!
+    try {
+      console.log(`[SMTP Mailer] SMTP config missing. Creating free Ethereal sandbox mailer...`);
+      const testAccount = await nodemailer.createTestAccount();
+      mailTransporter = nodemailer.createTransport({
+        host: testAccount.smtp.host,
+        port: testAccount.smtp.port,
+        secure: testAccount.smtp.secure,
+        auth: {
+          user: testAccount.user,
+          pass: testAccount.pass,
+        },
+      });
+      console.log(`[SMTP Mailer] Ethereal Sandbox created! User: ${testAccount.user}`);
+    } catch (err) {
+      console.error("[SMTP Mailer Error] Failed to auto-generate Ethereal test account:", err.message);
+    }
+  }
+}
+
+initMailer();
+
 async function sendBookingConfirmationEmail(booking, session) {
   const emailHtml = `
-    <div style="font-family: 'DM Sans', sans-serif; background-color: #FAF7F0; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; color: #1A3322; border: 2px solid #1A3322; box-shadow: 0 8px 0 rgba(26,51,34,0.15);">
+    <div style="font-family: 'DM Sans', sans-serif; background-color: #FAF7F0; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; color: #1A3322; border: 3px solid #1A3322; box-shadow: 0 8px 0 rgba(26,51,34,0.15);">
       <div style="text-align: center; border-bottom: 2px dashed #1A3322; padding-bottom: 20px; margin-bottom: 25px;">
         <span style="font-family: 'Anton', Impact, sans-serif; font-size: 28px; letter-spacing: 2px; color: #1A3322; text-transform: uppercase;">DUST2 TOURS</span>
         <div style="font-size: 12px; letter-spacing: 1px; color: #8C8070; margin-top: 5px; text-transform: uppercase;">Est. 2026 • Official Boarding Pass</div>
@@ -142,10 +183,6 @@ async function sendBookingConfirmationEmail(booking, session) {
           <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${session.time}</td>
         </tr>
         <tr>
-          <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Fare Category</td>
-          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #DDA5A5; background-color: #1A3322; display: inline-block; padding: 2px 8px; border-radius: 4px;">${session.price || 'Free'}</td>
-        </tr>
-        <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Ticket Reference</td>
           <td style="padding: 6px 0; font-size: 16px; font-family: monospace; font-weight: bold; color: #1A3322; letter-spacing: 1px;">${booking.bookingCode}</td>
         </tr>
@@ -168,35 +205,35 @@ Passenger: ${booking.name}
 
   // Write log to file
   fs.appendFileSync(EMAIL_LOG_FILE, logText + '\n', 'utf8');
-  console.log(`[Email Service] Confirmation logged for ${booking.email} [Ref: ${booking.bookingCode}]`);
 
-  // Try SMTP send if config is present
-  if (
-    process.env.SMTP_HOST &&
-    process.env.SMTP_USER &&
-    process.env.SMTP_PASS
-  ) {
+  if (mailTransporter) {
     try {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || '587'),
-        secure: process.env.SMTP_PORT === '465',
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
-      });
+      const isTestAccount = mailTransporter.options.host.includes('ethereal.email');
+      const fromEmail = process.env.SMTP_FROM_EMAIL || (isTestAccount ? mailTransporter.options.auth.user : 'bookings@dust2.tours');
 
-      await transporter.sendMail({
-        from: `"${process.env.SMTP_FROM_NAME || 'Dust2 Tours'}" <${process.env.SMTP_FROM_EMAIL || 'no-reply@dust2.tours'}>`,
+      const info = await mailTransporter.sendMail({
+        from: `"${process.env.SMTP_FROM_NAME || 'Dust2 Tours'}" <${fromEmail}>`,
         to: booking.email,
         subject: `Your Booking is Confirmed! (Ref: ${booking.bookingCode}) - Dust2 Tours`,
         html: emailHtml,
       });
-      console.log(`[SMTP Mailer] Real email dispatched to ${booking.email}`);
+
+      if (isTestAccount) {
+        const previewUrl = nodemailer.getTestMessageUrl(info);
+        console.log(`========================================`);
+        console.log(`📩 [Ethereal Mail] HTML test email dispatched!`);
+        console.log(`👉 View Preview: ${previewUrl}`);
+        console.log(`========================================`);
+        
+        fs.appendFileSync(EMAIL_LOG_FILE, `Ethereal Sandbox Preview URL: ${previewUrl}\n------------------------------------------------------------\n`, 'utf8');
+      } else {
+        console.log(`[SMTP Mailer] Real production email dispatched to ${booking.email}`);
+      }
     } catch (smtpError) {
-      console.error("[SMTP Mailer Error] Failed sending real email:", smtpError.message);
+      console.error("[SMTP Mailer Error] Failed sending email:", smtpError.message);
     }
+  } else {
+    console.log(`[Email Service] Mailer transporter not initialized. Booking logged to sent_emails.log.`);
   }
 }
 
@@ -207,7 +244,6 @@ app.get('/api/schedule', (req, res) => {
   const sessions = readSchedule();
   const bookings = readBookings();
 
-  // For each session, compute booked count
   const enrichedSessions = sessions.map(session => {
     const bookedCount = bookings.filter(b => b.sessionId === session.id).length;
     const remainingSlots = Math.max(0, (session.maxSlots || 5) - bookedCount);
@@ -225,12 +261,10 @@ app.get('/api/schedule', (req, res) => {
 app.post('/api/book', (req, res) => {
   const { sessionId, name, email, phone } = req.body;
 
-  // Initial inputs validation
   if (!sessionId || !name || !email) {
     return res.status(400).json({ error: "Missing required fields (session, name, and email are mandatory)." });
   }
 
-  // Enqueue this booking task
   enqueueBookingTask(async () => {
     const sessions = readSchedule();
     const session = sessions.find(s => s.id === sessionId);
@@ -247,7 +281,7 @@ app.post('/api/book', (req, res) => {
       return { status: 409, data: { error: "This session is fully booked. Only 5 slots are available." } };
     }
 
-    // Check if the user is already booked for this exact session
+    // Check double-booking
     const isDoubleBooked = sessionBookings.some(b => b.email.toLowerCase() === email.toLowerCase());
     if (isDoubleBooked) {
       return { status: 400, data: { error: "You are already booked for this tour session." } };
@@ -272,7 +306,6 @@ app.post('/api/book', (req, res) => {
       return { status: 500, data: { error: "Internal Database Write Failure. Please try again." } };
     }
 
-    // Trigger email confirmation in the background
     sendBookingConfirmationEmail(newBooking, session).catch(console.error);
 
     return { status: 201, data: newBooking };
@@ -293,7 +326,6 @@ app.get('/api/admin/bookings', (req, res) => {
   const bookings = readBookings();
   const sessions = readSchedule();
 
-  // Attach session details to bookings for the manifest
   const enrichedBookings = bookings.map(b => {
     const session = sessions.find(s => s.id === b.sessionId);
     return {
@@ -304,7 +336,6 @@ app.get('/api/admin/bookings', (req, res) => {
     };
   });
 
-  // Calculate statistics
   const stats = {
     totalBookings: bookings.length,
     activeTours: sessions.length,
@@ -378,7 +409,7 @@ app.post('/api/admin/schedule', (req, res) => {
     if (!session.id || !session.title || !session.date || !session.time) {
       return res.status(400).json({ error: "All sessions must contain a unique ID, Title, Date, and Departure Time." });
     }
-    session.maxSlots = parseInt(session.maxSlots) || 5; // Enforce integer capacity
+    session.maxSlots = parseInt(session.maxSlots) || 5;
   }
 
   const success = writeSchedule(newSchedule);
@@ -386,7 +417,6 @@ app.post('/api/admin/schedule', (req, res) => {
     return res.status(500).json({ error: "Failed to write schedule configuration to file." });
   }
 
-  // Remove bookings that belong to deleted sessions (Optional, but clean)
   const bookings = readBookings();
   const activeSessionIds = newSchedule.map(s => s.id);
   const filteredBookings = bookings.filter(b => activeSessionIds.includes(b.sessionId));
@@ -399,7 +429,6 @@ app.post('/api/admin/schedule', (req, res) => {
 
 // --- Server Startup ---
 
-// Initialize default files if they do not exist
 if (!fs.existsSync(SCHEDULE_FILE)) {
   writeSchedule([]);
 }

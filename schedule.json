@@ -5,8 +5,7 @@
     "date": "2026-06-10",
     "time": "10:00",
     "maxSlots": 5,
-    "description": "An educational walking tour through the legendary landmarks of de_dust2. Discover the masonry of A-Long, the tactical history of Pit, and enjoy panoramic views of the entire site from Catwalk. Perfect for first-time visitors.",
-    "price": "$25"
+    "description": "An educational walking tour through the legendary landmarks of de_dust2. Discover the masonry of A-Long, the tactical history of Pit, and enjoy panoramic views of the entire site from Catwalk. Perfect for first-time visitors."
   },
   {
     "id": "session-2",
@@ -14,8 +13,7 @@
     "date": "2026-06-10",
     "time": "14:00",
     "maxSlots": 5,
-    "description": "Descend into the cool shadows of the Upper and Lower Tunnels. Visit the historic B-Platform, learn the secret defense strategies of 'Car', and marvel at the engineering of B-Doors. Flashlights and helmets provided.",
-    "price": "$30"
+    "description": "Descend into the cool shadows of the Upper and Lower Tunnels. Visit the historic B-Platform, learn the secret defense strategies of 'Car', and marvel at the engineering of B-Doors. Flashlights and helmets provided."
   },
   {
     "id": "session-3",
@@ -23,8 +21,7 @@
     "date": "2026-06-12",
     "time": "11:30",
     "maxSlots": 5,
-    "description": "A thrilling high-exposure tour across Mid Doors, tracing the dangerous corridor of suicide-alley and climbing up the winding steps of Catwalk. Experience the tension and architectural beauty of the center map.",
-    "price": "$35"
+    "description": "A thrilling high-exposure tour across Mid Doors, tracing the dangerous corridor of suicide-alley and climbing up the winding steps of Catwalk. Experience the tension and architectural beauty of the center map."
   },
   {
     "id": "session-4",
@@ -32,7 +29,6 @@
     "date": "2026-06-13",
     "time": "18:00",
     "maxSlots": 5,
-    "description": "Enjoy the golden hour over Dust2. Walk from the secure fortresses of CT Spawn, up the ramp to A-Short, and finish the day with high-end refreshments under the historical archway at goose.",
-    "price": "$45"
+    "description": "Enjoy the golden hour over Dust2. Walk from the secure fortresses of CT Spawn, up the ramp to A-Short, and finish the day with high-end refreshments under the historical archway at goose."
   }
 ]

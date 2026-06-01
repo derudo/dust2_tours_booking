@@ -23,7 +23,6 @@
     <div class="header-container">
       <div class="brand-logo-area">
         <div class="logo-wrapper">
-          <!-- Main SVG Logo placeholder -->
           <img src="images/logo.svg" id="main-logo-svg" alt="Dust2 Tours Badge Logo">
         </div>
         <div class="brand-titles">
@@ -57,7 +56,7 @@
     <div class="section-header">
       <span class="section-subtitle">Seasonal Schedule</span>
       <h3 class="section-title">AVAILABLE DEPARTURES</h3>
-      <p class="section-desc">Select your route below to request a boarding pass. All bookings include safety briefings and entry passes.</p>
+      <p class="section-desc">Select your route below to request a boarding pass. All bookings are entirely complimentary and include certified guides.</p>
     </div>
 
     <!-- Dynamic Schedule Grid -->
@@ -76,7 +75,7 @@
       <button class="modal-close-btn" id="close-modal-btn" aria-label="Close dialog">&times;</button>
       
       <div class="modal-header">
-        <span class="modal-subtitle" id="modal-tour-price">PRICE: FREE</span>
+        <span class="modal-subtitle">COMPLIMENTARY PASS</span>
         <h4 class="modal-title" id="modal-tour-title">Reserve Passenger Seat</h4>
         <p class="modal-tour-meta"><span id="modal-tour-date">Date</span> at <span id="modal-tour-time">Time</span></p>
       </div>
@@ -120,6 +119,7 @@
   <div class="modal-overlay" id="ticket-modal" aria-hidden="true" role="dialog">
     <div class="ticket-container">
       <div class="ticket-card" id="printable-ticket">
+        <div class="stub-notch-bottom"></div>
         <!-- Main Boarding Ticket Part -->
         <div class="ticket-main">
           <div class="ticket-header">
@@ -160,8 +160,8 @@
               </div>
               <div class="ticket-row-split">
                 <div class="ticket-field">
-                  <span class="ticket-label">FARE CATEGORY</span>
-                  <span class="ticket-value highlight" id="ticket-tour-price">$25</span>
+                  <span class="ticket-label">FARE STATUS</span>
+                  <span class="ticket-value highlight">COMPLIMENTARY</span>
                 </div>
                 <div class="ticket-field">
                   <span class="ticket-label">BOARDING REF</span>
@@ -173,7 +173,6 @@
 
           <div class="ticket-footer">
             <div class="barcode-wrapper">
-              <!-- Styled Barcode CSS -->
               <div class="classic-barcode">
                 <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
               </div>

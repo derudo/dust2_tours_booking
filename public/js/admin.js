@@ -72,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Populate Route Dropdown Filter
   function populateRouteFilter(schedule) {
-    // Keep current selection
     const currentVal = manifestRouteFilter.value;
     
     manifestRouteFilter.innerHTML = '<option value="all">All Excursions</option>';
@@ -89,12 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Render Passenger Manifest ---
   function renderManifest() {
     const filtered = bookingsData.filter(booking => {
-      // Apply Route filter
       if (activeFilters.route !== 'all' && booking.sessionId !== activeFilters.route) {
         return false;
       }
       
-      // Apply Search query
       if (activeFilters.search) {
         const query = activeFilters.search.toLowerCase();
         const nameMatch = booking.name.toLowerCase().includes(query);
@@ -162,11 +159,12 @@ document.addEventListener('DOMContentLoaded', () => {
       bookingsTableBody.appendChild(tr);
     });
 
-    // Attach row triggers
+    // Attach row triggers using change event
     bookingsTableBody.querySelectorAll('.checkin-toggle-input').forEach(input => {
       input.addEventListener('change', handleCheckinToggle);
     });
 
+    // Attach Cancel triggers using click event
     bookingsTableBody.querySelectorAll('.cancel-booking-btn').forEach(btn => {
       btn.addEventListener('click', handleCancelBooking);
     });
@@ -193,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error("API Check-in update failed");
       }
 
-      // Refresh records quietly to sync stats
       fetchAdminData();
       showToast("Checked-in manifest status updated");
 
@@ -206,14 +203,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Handle Cancel passenger Booking
+  // Handle Cancel passenger Booking (safely wrapped in .closest())
   async function handleCancelBooking(e) {
-    const bookingId = e.target.getAttribute('data-id');
+    const btn = e.target.closest('.cancel-booking-btn');
+    if (!btn) return;
+    
+    const bookingId = btn.getAttribute('data-id');
     const targetBooking = bookingsData.find(b => b.id === bookingId);
     if (!targetBooking) return;
 
     const confirmCancel = confirm(`⚠️ Are you sure you want to cancel the booking for passenger "${targetBooking.name}"?\nThis slot will immediately open up for other online customers.`);
-    
     if (!confirmCancel) return;
 
     try {
@@ -228,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       showToast(`Cancelled reservation for ${targetBooking.name}`);
-      fetchAdminData(); // Full refresh manifest lists
+      fetchAdminData();
 
     } catch (error) {
       console.error(error);
@@ -252,13 +251,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     scheduleData.forEach(tour => {
       const div = document.createElement('div');
-      // Style changed configurations visually using the changed class
       div.className = `editor-tour-item ${isConfigDirty ? 'changed' : ''}`;
       
       div.innerHTML = `
         <h4 class="editor-tour-title">${tour.title}</h4>
         <div class="editor-tour-meta">
-          📅 ${formatDate(tour.date)} • ⏰ ${tour.time} • 🎫 ${tour.price || 'Free'}
+          📅 ${formatDate(tour.date)} • ⏰ ${tour.time} • 🎫 Complimentary
         </div>
         <p class="editor-tour-desc">${tour.description}</p>
         
@@ -279,13 +277,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Delete session from memory list
+  // Delete session from memory list (safely wrapped in .closest())
   function handleDeleteSession(e) {
-    const sessionId = e.target.getAttribute('data-id');
+    const btn = e.target.closest('.delete-session-btn');
+    if (!btn) return;
+
+    const sessionId = btn.getAttribute('data-id');
     const targetSession = scheduleData.find(s => s.id === sessionId);
     if (!targetSession) return;
 
-    // Check if bookings exist for this session
     const bookingsCount = bookingsData.filter(b => b.sessionId === sessionId).length;
     let message = `Are you sure you want to delete the excursion departure "${targetSession.title}"?`;
     if (bookingsCount > 0) {
@@ -294,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!confirm(message)) return;
 
-    // Remove from active list
     scheduleData = scheduleData.filter(s => s.id !== sessionId);
     setConfigDirtyState(true);
     renderConfigEditor();
@@ -332,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       showToast("Successfully updated schedule.json config file");
       setConfigDirtyState(false);
-      fetchAdminData(); // reload statistics and lists
+      fetchAdminData();
 
     } catch (error) {
       console.error(error);
@@ -347,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
   openAddSessionBtn.addEventListener('click', () => {
     addSessionForm.reset();
     
-    // Set default date to 1 week from now
     const nextWeek = new Date();
     nextWeek.setDate(nextWeek.getDate() + 7);
     document.getElementById('new-session-date').value = nextWeek.toISOString().substring(0,10);
@@ -370,19 +368,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const title = document.getElementById('new-session-title').value.trim();
     const date = document.getElementById('new-session-date').value;
     const time = document.getElementById('new-session-time').value;
-    const price = document.getElementById('new-session-price').value.trim() || 'Free';
     const capacity = parseInt(document.getElementById('new-session-capacity').value) || 5;
     const description = document.getElementById('new-session-desc').value.trim();
 
-    // Create session in local memory list
     const newSession = {
       id: 'session-' + Date.now(),
       title,
       date,
       time,
       maxSlots: capacity,
-      description,
-      price
+      description
     };
 
     scheduleData.push(newSession);
@@ -395,7 +390,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Export CSV Manifests Download ---
   exportCsvBtn.addEventListener('click', () => {
-    // Grab all current items matching searches/routes
     const filtered = bookingsData.filter(booking => {
       if (activeFilters.route !== 'all' && booking.sessionId !== activeFilters.route) return false;
       if (activeFilters.search) {
@@ -413,7 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Generate CSV contents
     const headers = ["Booking Reference", "Passenger Name", "Contact Email", "Contact Phone", "Tour Route", "Date", "Departure Time", "Check-In Boarded", "Created Date"];
     const rows = filtered.map(b => [
       b.bookingCode,

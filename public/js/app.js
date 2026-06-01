@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Modal Fields
   const modalTourTitle = document.getElementById('modal-tour-title');
-  const modalTourPrice = document.getElementById('modal-tour-price');
   const modalTourDate = document.getElementById('modal-tour-date');
   const modalTourTime = document.getElementById('modal-tour-time');
   const formSessionId = document.getElementById('form-session-id');
@@ -21,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const ticketTourTitle = document.getElementById('ticket-tour-title');
   const ticketTourDate = document.getElementById('ticket-tour-date');
   const ticketTourTime = document.getElementById('ticket-tour-time');
-  const ticketTourPrice = document.getElementById('ticket-tour-price');
   const ticketBookingCode = document.getElementById('ticket-booking-code');
   const ticketBarcodeNum = document.getElementById('ticket-barcode-num');
   
@@ -100,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       card.innerHTML = `
         <div class="tour-card-header">
-          <span class="tour-price-badge">${session.price || 'Free'}</span>
           <h4 class="tour-title">${session.title}</h4>
           <div class="tour-meta-list">
             <div class="tour-meta-item">
@@ -147,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     formSessionId.value = session.id;
     modalTourTitle.textContent = session.title;
-    modalTourPrice.textContent = `PRICE: ${session.price || 'FREE'}`;
     modalTourDate.textContent = formatDate(session.date);
     modalTourTime.textContent = session.time;
     
@@ -238,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ticketTourTitle.textContent = session.title;
     ticketTourDate.textContent = formatDate(session.date);
     ticketTourTime.textContent = session.time;
-    ticketTourPrice.textContent = session.price || 'FREE';
     ticketBookingCode.textContent = booking.bookingCode;
     ticketBarcodeNum.textContent = booking.bookingCode;
 
@@ -273,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Utility Formatting Helpers ---
   function formatDate(dateStr) {
-    // converts YYYY-MM-DD to beautiful localized format
     try {
       const parts = dateStr.split('-');
       if (parts.length !== 3) return dateStr;

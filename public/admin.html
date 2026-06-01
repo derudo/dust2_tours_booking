@@ -133,7 +133,7 @@
 
         <!-- Visual Tour Editor Cards -->
         <div class="editor-tours-list" id="editor-tours-list">
-          <!-- Dynamic schedule edit items -->
+          <!-- Dynamic scheduled departures -->
           <div class="loading-spinner-wrapper">
             <div class="classic-spinner"></div>
             <p>Loading scheduled departures...</p>
@@ -184,17 +184,10 @@
           </div>
         </div>
 
-        <div class="form-row-split">
-          <div class="form-group">
-            <label for="new-session-price" class="form-label">Ticket Fare Price</label>
-            <input type="text" id="new-session-price" class="form-input" placeholder="e.g. $25 or Free" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="new-session-capacity" class="form-label">Capacity Slots Limit</label>
-            <input type="number" id="new-session-capacity" class="form-input" value="5" min="1" max="100" required>
-            <span class="form-help">Default is 5 slots.</span>
-          </div>
+        <div class="form-group">
+          <label for="new-session-capacity" class="form-label">Capacity Slots Limit</label>
+          <input type="number" id="new-session-capacity" class="form-input" value="5" min="1" max="100" required>
+          <span class="form-help">Default is 5 slots. Excursions are strictly complimentary.</span>
         </div>
         
         <div class="form-group">
