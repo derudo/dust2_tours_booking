@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dust2 Tours Agency - Premium Historical Expeditions</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Book an exclusive, small-group historical walking tour of de_dust2. Discover legendary tactical points, tunnels, and historic spawn zones with certified guides.">
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml">
+  
+  <!-- Typography Integration: Anton & DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="brand-logo-area">
+        <div class="logo-wrapper">
+          <!-- Main SVG Logo placeholder -->
+          <img src="images/logo.svg" id="main-logo-svg" alt="Dust2 Tours Badge Logo">
+        </div>
+        <div class="brand-titles">
+          <h1 class="agency-title" id="main-h1-title">DUST2 TOURS</h1>
+          <span class="agency-tagline">Licensed Heritage Expeditions</span>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#tours-section" class="nav-item">Active Expeditions</a>
+        <a href="admin.html" class="nav-item admin-portal-btn">Operator Panel</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Welcome Banner -->
+  <section class="hero-banner">
+    <div class="hero-content">
+      <div class="vintage-badge">Est. 2026</div>
+      <h2 class="hero-headline">DISCOVER THE WORLD'S MOST ICONIC TACTICAL HERITAGE SITE</h2>
+      <p class="hero-subtext">
+        Embark on an immersive, small-group architectural and tactical expedition. Explore the historic corridors of de_dust2, led by veteran, certified guides. To maintain strict historical preservation, groups are strictly capped at <strong>5 passengers per departure</strong>.
+      </p>
+      <div class="vintage-divider">
+        <span class="divider-diamond"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Tour Schedule Section -->
+  <main class="tours-container" id="tours-section">
+    <div class="section-header">
+      <span class="section-subtitle">Seasonal Schedule</span>
+      <h3 class="section-title">AVAILABLE DEPARTURES</h3>
+      <p class="section-desc">Select your route below to request a boarding pass. All bookings include safety briefings and entry passes.</p>
+    </div>
+
+    <!-- Dynamic Schedule Grid -->
+    <div class="schedule-grid" id="schedule-grid">
+      <!-- Loading State -->
+      <div class="loading-spinner-wrapper">
+        <div class="classic-spinner"></div>
+        <p>Consulting agency archives...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Booking Dialog Modal -->
+  <div class="modal-overlay" id="booking-modal" aria-hidden="true" role="dialog">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="close-modal-btn" aria-label="Close dialog">&times;</button>
+      
+      <div class="modal-header">
+        <span class="modal-subtitle" id="modal-tour-price">PRICE: FREE</span>
+        <h4 class="modal-title" id="modal-tour-title">Reserve Passenger Seat</h4>
+        <p class="modal-tour-meta"><span id="modal-tour-date">Date</span> at <span id="modal-tour-time">Time</span></p>
+      </div>
+      
+      <div class="vintage-divider mini">
+        <span class="divider-diamond"></span>
+      </div>
+      
+      <form class="booking-form" id="booking-form">
+        <input type="hidden" id="form-session-id">
+        
+        <div class="form-group">
+          <label for="passenger-name" class="form-label">Full Name of Passenger</label>
+          <input type="text" id="passenger-name" class="form-input" placeholder="e.g. Gordon Freeman" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="passenger-email" class="form-label">Contact Email Address</label>
+          <input type="email" id="passenger-email" class="form-input" placeholder="e.g. freeman@blackmesa.org" required>
+          <span class="form-help">Your boarding pass and confirmation receipt will be dispatched to this address.</span>
+        </div>
+        
+        <div class="form-group">
+          <label for="passenger-phone" class="form-label">Mobile Phone (Optional)</label>
+          <input type="tel" id="passenger-phone" class="form-input" placeholder="e.g. +1 (555) 012-3456">
+        </div>
+
+        <div class="capacity-warning-badge" id="slots-left-warning">
+          Only 5 slots total per expedition. Secure yours now.
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-booking-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submit-booking-btn">Request Boarding Pass</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success Boarding Pass Ticket View (Luggage Tag / Boarding Pass Style) -->
+  <div class="modal-overlay" id="ticket-modal" aria-hidden="true" role="dialog">
+    <div class="ticket-container">
+      <div class="ticket-card" id="printable-ticket">
+        <!-- Main Boarding Ticket Part -->
+        <div class="ticket-main">
+          <div class="ticket-header">
+            <div class="ticket-logo-section">
+              <img src="images/logo.svg" class="ticket-mini-logo" alt="Dust2 Badge">
+              <div>
+                <div class="ticket-agency-name">DUST2 TOURS</div>
+                <div class="ticket-sub">OFFICIAL BOARDING PASS</div>
+              </div>
+            </div>
+            <div class="ticket-stamp-area">
+              <div class="vintage-stamp">PASSED</div>
+            </div>
+          </div>
+
+          <div class="ticket-body">
+            <div class="ticket-column">
+              <div class="ticket-field">
+                <span class="ticket-label">PASSENGER NAME</span>
+                <span class="ticket-value" id="ticket-passenger-name">Gordon Freeman</span>
+              </div>
+              <div class="ticket-field">
+                <span class="ticket-label">EXPEDITION ROUTE</span>
+                <span class="ticket-value" id="ticket-tour-title">Grand Dust2 Archaeological Walk</span>
+              </div>
+            </div>
+
+            <div class="ticket-column">
+              <div class="ticket-row-split">
+                <div class="ticket-field">
+                  <span class="ticket-label">DEPARTURE DATE</span>
+                  <span class="ticket-value" id="ticket-tour-date">2026-06-10</span>
+                </div>
+                <div class="ticket-field">
+                  <span class="ticket-label">DEPARTURE TIME</span>
+                  <span class="ticket-value" id="ticket-tour-time">10:00 AM</span>
+                </div>
+              </div>
+              <div class="ticket-row-split">
+                <div class="ticket-field">
+                  <span class="ticket-label">FARE CATEGORY</span>
+                  <span class="ticket-value highlight" id="ticket-tour-price">$25</span>
+                </div>
+                <div class="ticket-field">
+                  <span class="ticket-label">BOARDING REF</span>
+                  <span class="ticket-value monospace" id="ticket-booking-code">D2-A9F8X4Z</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ticket-footer">
+            <div class="barcode-wrapper">
+              <!-- Styled Barcode CSS -->
+              <div class="classic-barcode">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <span class="barcode-number" id="ticket-barcode-num">D2-A9F8X4Z</span>
+            </div>
+            <div class="ticket-fineprint">
+              PRESENT TICKET 10 MINS PRIOR TO DEPARTURE AT PRIMARY ACCESS SPAWN. CAPPED AT 5 PASSENGERS MAX.
+            </div>
+          </div>
+        </div>
+
+        <!-- Tear-off Luggage Tag Stub -->
+        <div class="ticket-stub">
+          <div class="stub-header">
+            <span>RECEIPT STUB</span>
+          </div>
+          <div class="stub-body">
+            <div class="ticket-field">
+              <span class="ticket-label">PASSENGER</span>
+              <span class="ticket-value compact" id="stub-passenger-name">G. Freeman</span>
+            </div>
+            <div class="ticket-field">
+              <span class="ticket-label">ROUTE ID</span>
+              <span class="ticket-value compact monospace" id="stub-tour-id">SESS-01</span>
+            </div>
+            <div class="ticket-field">
+              <span class="ticket-label">REF CODE</span>
+              <span class="ticket-value compact monospace" id="stub-booking-code">D2-A9F8</span>
+            </div>
+            <div class="stub-stamp">
+              <span>OK</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ticket Actions -->
+      <div class="ticket-modal-actions">
+        <button class="btn btn-secondary btn-icon" id="print-ticket-btn">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2.5 2.5 0 0 0 0 5h6a2.5 2.5 0 0 0 0-5H5z"/></svg>
+          Print Boarding Ticket
+        </button>
+        <button class="btn btn-primary" id="close-ticket-btn">Return to Agency</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Standard Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-badge-logo">
+        <img src="images/logo.svg" alt="Dust2 badge footer">
+      </div>
+      <p>&copy; 2026 Dust2 Tours Agency. Licensed Tour Operators. All rights reserved.</p>
+      <p class="footer-subtext">Authorized tactical preservation excursions, strictly limited to 5-slot passenger manifest files.</p>
+    </div>
+  </footer>
+
+  <!-- Application Frontend Logic JS -->
+  <script src="js/app.js"></script>
+</body>
+</html>

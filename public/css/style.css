@@ -1,0 +1,1408 @@
+/* ==========================================================================
+   CSS DESIGN SYSTEM - DUST2 TOURS AGENCY (TRADITIONAL TRAVEL AGENCY EST.)
+   No Glassmorphism • Elegant Print Brochure Aesthetic • Traditional Layouts
+   ========================================================================== */
+
+/* Variables & Theme Tokens */
+:root {
+  /* Harmonious Vintage Palette */
+  --bg-cream: #FAF7F0;          /* Warm Ivory/Sand paper */
+  --primary-green: #1A3322;     /* Rich deep forest green */
+  --primary-green-light: #2A4833;
+  --accent-pink: #DDA5A5;       /* Muted dusty pink for active triggers */
+  --accent-pink-dark: #C68B8B;  /* Deeper dusty rose for hover states */
+  --accent-pink-light: #F3D9D9; /* Very soft rose highlights */
+  --text-dark: #1A3322;         /* High-contrast brand typography */
+  --text-muted: #8C8070;        /* Retro warm-gray text */
+  --border-color: #1A3322;      /* Elegant thin ink borders */
+  
+  /* Fonts */
+  --font-headings: 'Anton', Impact, sans-serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
+  
+  /* Shadows & Layouts (No neon glows, traditional borders) */
+  --shadow-retro: 4px 4px 0px 0px #1A3322;
+  --shadow-retro-hover: 8px 8px 0px 0px #1A3322;
+  --shadow-retro-pink: 4px 4px 0px 0px #DDA5A5;
+  --border-thin: 1px solid #1A3322;
+  --border-thick: 3px solid #1A3322;
+  --border-dashed: 2px dashed #1A3322;
+}
+
+/* Document & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-cream);
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  padding-bottom: 0;
+}
+
+/* Typography elements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headings);
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+}
+
+/* Vintage Decorative Dividers */
+.vintage-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px auto;
+  width: 100%;
+  max-width: 400px;
+}
+.vintage-divider::before,
+.vintage-divider::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background-color: var(--primary-green);
+}
+.vintage-divider .divider-diamond {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background-color: var(--accent-pink);
+  border: 2px solid var(--primary-green);
+  transform: rotate(45deg);
+  margin: 0 15px;
+}
+.vintage-divider.mini {
+  margin: 15px auto;
+  max-width: 200px;
+}
+
+/* ==========================================================================
+   NAVIGATION & HEADER
+   ========================================================================== */
+.main-header {
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  border-bottom: var(--border-thick);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(26,51,34,0.1);
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.brand-logo-area {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-cream);
+  padding: 2px;
+  background-color: var(--bg-cream);
+}
+#main-logo-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-titles .agency-title {
+  font-size: 24px;
+  letter-spacing: 2px;
+  color: var(--bg-cream);
+}
+.brand-titles .agency-tagline {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--accent-pink);
+  font-weight: bold;
+  display: block;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-item {
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  position: relative;
+  padding: 8px 0;
+  transition: color 0.3s ease;
+}
+.nav-item::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent-pink);
+  transition: width 0.3s ease;
+}
+.nav-item:hover {
+  color: var(--accent-pink);
+}
+.nav-item:hover::after {
+  width: 100%;
+}
+
+.admin-portal-btn {
+  background-color: var(--accent-pink);
+  color: var(--primary-green);
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: var(--border-thin);
+  transition: all 0.3s ease;
+}
+.admin-portal-btn:hover {
+  background-color: var(--bg-cream);
+  color: var(--primary-green);
+  border-color: var(--bg-cream);
+  transform: translateY(-2px);
+}
+.admin-portal-btn::after {
+  display: none;
+}
+
+/* ==========================================================================
+   HERO / WELCOME BANNER
+   ========================================================================== */
+.hero-banner {
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  text-align: center;
+  padding: 80px 24px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: var(--border-thick);
+}
+
+.hero-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.05;
+  background-image: radial-gradient(var(--bg-cream) 20%, transparent 20%),
+                    radial-gradient(var(--bg-cream) 20%, transparent 20%);
+  background-size: 12px 12px;
+  background-position: 0 0, 6px 6px;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.vintage-badge {
+  display: inline-block;
+  background-color: var(--accent-pink);
+  color: var(--primary-green);
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--primary-green);
+}
+
+.hero-headline {
+  font-size: 48px;
+  letter-spacing: 3px;
+  line-height: 1.05;
+  margin-bottom: 24px;
+  color: var(--bg-cream);
+}
+
+.hero-subtext {
+  font-size: 16px;
+  color: #D6E4DB;
+  max-width: 650px;
+  margin: 0 auto 30px auto;
+  font-family: var(--font-body);
+}
+
+/* ==========================================================================
+   MAIN SCHEDULE GRID (PASSENGER CLIENT VIEW)
+   ========================================================================== */
+.tours-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-subtitle {
+  font-family: var(--font-body);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: var(--text-muted);
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 36px;
+  letter-spacing: 2px;
+  color: var(--primary-green);
+  position: relative;
+  display: inline-block;
+  padding-bottom: 12px;
+}
+
+.section-desc {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 8px auto 0 auto;
+}
+
+/* Card layout grid */
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 36px;
+  min-height: 250px;
+}
+
+/* Traditional Postcard / Brochure Card Design */
+.tour-card {
+  background-color: var(--bg-cream);
+  border: var(--border-thick);
+  border-radius: 8px;
+  box-shadow: var(--shadow-retro);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+
+.tour-card::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  border: var(--border-thin);
+  pointer-events: none;
+  opacity: 0.3;
+  border-radius: 4px;
+}
+
+.tour-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: var(--shadow-retro-hover);
+}
+
+.tour-card-header {
+  padding: 24px 24px 12px 24px;
+  border-bottom: var(--border-dashed);
+  position: relative;
+}
+
+.tour-title {
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  color: var(--primary-green);
+  margin-bottom: 8px;
+  height: 52px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.tour-price-badge {
+  position: absolute;
+  top: 0;
+  right: 24px;
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  padding: 6px 12px;
+  font-family: var(--font-headings);
+  font-size: 16px;
+  border-radius: 0 0 4px 4px;
+  border: var(--border-thin);
+  border-top: none;
+}
+
+.tour-meta-list {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+.tour-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tour-card-body {
+  padding: 20px 24px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tour-description {
+  font-size: 14px;
+  color: #4C5E50;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+/* Highlights Dusty Pink Background as request: "also dusty pink may serve as background" */
+.tour-capacity-banner {
+  background-color: var(--accent-pink-light); /* soft pink */
+  border: 1px solid var(--accent-pink);
+  border-radius: 4px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* Fully Booked state using accent dusty pink as base background */
+.tour-capacity-banner.fully-booked {
+  background-color: var(--accent-pink);
+  border-color: var(--accent-pink-dark);
+}
+
+.capacity-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: var(--primary-green);
+}
+.capacity-status {
+  font-family: var(--font-headings);
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  color: var(--primary-green);
+}
+.fully-booked .capacity-label,
+.fully-booked .capacity-status {
+  color: var(--primary-green);
+  font-weight: bold;
+}
+
+/* Button UI */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: var(--border-thick);
+}
+
+.btn-primary {
+  background-color: var(--accent-pink);
+  color: var(--primary-green);
+  box-shadow: var(--shadow-retro);
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent-pink-dark);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px var(--primary-green);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0px 0px var(--primary-green);
+}
+.btn-primary:disabled {
+  background-color: #E2DDD5;
+  border-color: #A39B8E;
+  color: #A39B8E;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: var(--bg-cream);
+  color: var(--primary-green);
+  border-color: var(--primary-green);
+}
+.btn-secondary:hover {
+  background-color: #EDE8DD;
+}
+
+.btn-danger {
+  background-color: #F0A5A5;
+  color: #5C1E1E;
+  border-color: #5C1E1E;
+}
+.btn-danger:hover {
+  background-color: #E68B8B;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 11px;
+  border-width: 2px;
+}
+
+.btn-icon {
+  gap: 6px;
+}
+
+/* ==========================================================================
+   RESERVATION MODAL & FORM
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(26, 51, 34, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.active {
+  display: flex;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.modal-card {
+  background-color: var(--bg-cream);
+  border: var(--border-thick);
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  max-width: 500px;
+  width: 100%;
+  padding: 36px;
+  position: relative;
+  animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--primary-green);
+  cursor: pointer;
+  font-weight: bold;
+}
+.modal-close-btn:hover {
+  color: var(--accent-pink-dark);
+}
+
+.modal-header {
+  text-align: center;
+}
+.modal-subtitle {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent-pink-dark);
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+}
+.modal-title {
+  font-size: 28px;
+  color: var(--primary-green);
+  letter-spacing: 1px;
+}
+.modal-tour-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Forms layout */
+.booking-form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--primary-green);
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  background-color: #FAF7F0;
+  border: var(--border-thin);
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text-dark);
+  transition: all 0.2s ease;
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent-pink-dark);
+  box-shadow: 0 0 0 3px rgba(221,165,165,0.3);
+  background-color: #FFF;
+}
+.form-input.text-area {
+  resize: vertical;
+}
+
+.form-help {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+.capacity-warning-badge {
+  background-color: var(--accent-pink-light);
+  border: 1px solid var(--accent-pink);
+  border-radius: 4px;
+  color: #8C4040;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+/* ==========================================================================
+   VINTAGE BOARDING PASS TICKET VIEW (Dusty Pink background layout)
+   ========================================================================== */
+.ticket-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  max-width: 800px;
+  width: 100%;
+  animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+.ticket-card {
+  display: flex;
+  background-color: var(--accent-pink); /* Dusty Pink as ticket background! */
+  border: var(--border-thick);
+  border-radius: 8px;
+  box-shadow: 0 15px 45px rgba(26,51,34,0.35);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  color: var(--primary-green);
+}
+
+/* Tear off dashed divider line representing luggage tag stub */
+.ticket-card::before {
+  content: "";
+  position: absolute;
+  right: 200px;
+  top: 0;
+  bottom: 0;
+  border-left: var(--border-dashed);
+  z-index: 10;
+}
+
+/* Outer notch cuts on ticket edges representing retro tickets */
+.ticket-card::after {
+  content: "";
+  position: absolute;
+  right: 190px;
+  top: -12px;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(26, 51, 34, 0.7); /* match overlay */
+  border-radius: 50%;
+  border: var(--border-thick);
+  z-index: 10;
+}
+.ticket-card .stub-notch-bottom {
+  position: absolute;
+  right: 190px;
+  bottom: -12px;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(26, 51, 34, 0.7);
+  border-radius: 50%;
+  border: var(--border-thick);
+  z-index: 10;
+}
+
+/* Ticket Main Section */
+.ticket-main {
+  flex-grow: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px dashed rgba(26,51,34,0.2);
+  padding-bottom: 15px;
+}
+
+.ticket-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ticket-mini-logo {
+  width: 38px;
+  height: 38px;
+}
+.ticket-agency-name {
+  font-family: var(--font-headings);
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+.ticket-sub {
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: var(--primary-green-light);
+}
+
+/* Vintage ink stamp effect */
+.ticket-stamp-area {
+  position: relative;
+}
+.vintage-stamp {
+  border: 3px double #8C4040;
+  color: #8C4040;
+  font-family: var(--font-headings);
+  font-size: 16px;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  transform: rotate(-8deg);
+  font-weight: bold;
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+.ticket-body {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+.ticket-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ticket-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ticket-field {
+  display: flex;
+  flex-direction: column;
+}
+.ticket-label {
+  font-size: 9px;
+  font-weight: bold;
+  color: var(--primary-green-light);
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.ticket-value {
+  font-family: var(--font-headings);
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.ticket-value.highlight {
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  width: fit-content;
+}
+.ticket-value.monospace {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.ticket-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 2px dashed rgba(26,51,34,0.2);
+  padding-top: 15px;
+  margin-top: auto;
+}
+
+.barcode-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.classic-barcode {
+  display: flex;
+  height: 32px;
+  align-items: stretch;
+}
+.classic-barcode span {
+  width: 2px;
+  background-color: var(--primary-green);
+  margin-right: 1px;
+}
+.classic-barcode span:nth-child(3n) {
+  width: 4px;
+}
+.classic-barcode span:nth-child(5n) {
+  width: 1px;
+}
+.barcode-number {
+  font-family: monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ticket-fineprint {
+  font-size: 8px;
+  color: var(--primary-green-light);
+  max-width: 280px;
+  line-height: 1.2;
+  text-align: right;
+}
+
+/* Tear-off Stub Section */
+.ticket-stub {
+  width: 200px;
+  padding: 30px 20px;
+  background-color: rgba(26,51,34,0.04); /* visual offset */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stub-header {
+  border-bottom: 2px dashed rgba(26,51,34,0.2);
+  padding-bottom: 8px;
+  font-family: var(--font-headings);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: var(--primary-green-light);
+  text-align: center;
+}
+
+.stub-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  height: 100%;
+}
+
+.ticket-value.compact {
+  font-size: 13px;
+}
+
+.stub-stamp {
+  margin-top: auto;
+  border: 2px solid var(--primary-green);
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-headings);
+  font-size: 14px;
+  letter-spacing: 1px;
+  transform: rotate(15deg);
+  opacity: 0.6;
+  margin-left: auto;
+}
+
+.ticket-modal-actions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+.ticket-modal-actions .btn {
+  flex: 1;
+}
+
+/* ==========================================================================
+   ADMINISTRATOR DASHBOARD LAYOUT
+   ========================================================================== */
+.admin-body {
+  background-color: #FAF7F0;
+}
+
+.admin-header {
+  background-color: var(--primary-green);
+  border-bottom-color: var(--accent-pink);
+}
+
+.admin-portal-btn.return-btn {
+  background-color: transparent;
+  color: var(--bg-cream);
+  border-color: var(--bg-cream);
+}
+.admin-portal-btn.return-btn:hover {
+  background-color: var(--accent-pink);
+  color: var(--primary-green);
+  border-color: var(--accent-pink);
+}
+
+.admin-main-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 40px 24px 80px 24px;
+}
+
+/* Stats Overview Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background-color: var(--bg-cream);
+  border: var(--border-thick);
+  border-radius: 6px;
+  padding: 24px;
+  box-shadow: var(--shadow-retro);
+  display: flex;
+  flex-direction: column;
+}
+.stat-card.highlight {
+  background-color: var(--accent-pink);
+  box-shadow: var(--shadow-retro-pink);
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+.stat-card.highlight .stat-label {
+  color: var(--primary-green-light);
+}
+
+.stat-value {
+  font-family: var(--font-headings);
+  font-size: 36px;
+  color: var(--primary-green);
+  line-height: 1.1;
+  margin: 6px 0;
+}
+
+.stat-subtext {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Admin split workspace panels */
+.admin-workspace-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 36px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .admin-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-panel-card {
+  background-color: var(--bg-cream);
+  border: var(--border-thick);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: var(--shadow-retro);
+  position: relative;
+}
+
+.panel-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: var(--border-dashed);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+}
+
+.panel-title {
+  font-size: 24px;
+  color: var(--primary-green);
+}
+.panel-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.header-actions-group {
+  display: flex;
+  gap: 12px;
+}
+
+/* Manifest Filters Bar */
+.manifest-filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.search-input-wrapper {
+  flex-grow: 1;
+}
+.manifest-filters .form-input {
+  border-width: 2px;
+}
+
+/* Manifest Ledger Table styling */
+.table-container {
+  overflow-x: auto;
+  border: var(--border-thick);
+  border-radius: 4px;
+}
+
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+  background-color: #FAF7F0;
+}
+
+.ledger-table th {
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  font-family: var(--font-headings);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  padding: 12px 16px;
+  text-transform: uppercase;
+}
+
+.ledger-table td {
+  padding: 14px 16px;
+  border-bottom: var(--border-thin);
+  vertical-align: middle;
+}
+
+.ledger-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ledger-table tbody tr:hover td {
+  background-color: #FAF2E3;
+}
+
+/* Detail items in table cell */
+.passenger-meta {
+  display: flex;
+  flex-direction: column;
+}
+.passenger-name-text {
+  font-weight: bold;
+  color: var(--primary-green);
+  font-size: 14px;
+}
+.passenger-sub-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.route-meta-text {
+  font-weight: bold;
+  color: var(--primary-green);
+}
+.route-time-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Toggle Switch Widget */
+.toggle-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 22px;
+}
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #CCC;
+  transition: .3s;
+  border-radius: 34px;
+  border: 1px solid #999;
+}
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+input:checked + .toggle-slider {
+  background-color: var(--primary-green);
+  border-color: var(--primary-green);
+}
+input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+}
+.toggle-status-text {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.toggle-status-text.checked {
+  color: var(--primary-green);
+}
+.toggle-status-text.pending {
+  color: #8C603B;
+}
+
+/* Right side schedule config visual editor */
+.editor-tours-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.editor-tour-item {
+  border: 2px solid var(--primary-green);
+  border-radius: 6px;
+  padding: 16px;
+  background-color: #FAF7F0;
+  position: relative;
+}
+/* Active items or items being edited could have a pink highlight backdrop */
+.editor-tour-item.changed {
+  background-color: var(--accent-pink-light);
+  border-color: var(--accent-pink-dark);
+}
+
+.editor-tour-title {
+  font-family: var(--font-headings);
+  font-size: 18px;
+  color: var(--primary-green);
+  margin-bottom: 6px;
+}
+.editor-tour-meta {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.editor-tour-desc {
+  font-size: 12px;
+  color: #555;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.editor-tour-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.capacity-badge-pill {
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.config-action-bar {
+  border-top: var(--border-dashed);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.config-status-help {
+  font-size: 11px;
+  font-weight: bold;
+}
+.config-status-help.synced {
+  color: var(--primary-green);
+}
+.config-status-help.dirty {
+  color: #A64B4B;
+  animation: pulseColor 1.5s infinite alternate;
+}
+
+/* ==========================================================================
+   TOAST NOTIFICATION COMPONENT
+   ========================================================================== */
+.toast-banner {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  border: var(--border-thick);
+  border-radius: 4px;
+  padding: 16px 24px;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 6px 6px 0px 0px rgba(0,0,0,0.15);
+  transform: translateY(150%);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 300;
+}
+.toast-banner.active {
+  transform: translateY(0);
+}
+.toast-banner.error {
+  background-color: #8C4040;
+  border-color: var(--primary-green);
+}
+
+/* ==========================================================================
+   FOOTER SECTION
+   ========================================================================== */
+.main-footer {
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  text-align: center;
+  padding: 40px 24px;
+  border-top: var(--border-thick);
+  margin-top: 80px;
+}
+.admin-footer {
+  margin-top: 120px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-badge-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--bg-cream);
+  padding: 3px;
+  margin-bottom: 8px;
+}
+.footer-badge-logo img {
+  width: 100%;
+  height: 100%;
+}
+
+.main-footer p {
+  font-size: 13px;
+  color: #D6E4DB;
+}
+
+.main-footer .footer-subtext {
+  font-size: 11px;
+  color: var(--text-muted);
+  max-width: 500px;
+}
+
+/* ==========================================================================
+   UTILITY SPINNERS & ANIMATIONS
+   ========================================================================== */
+.loading-spinner-wrapper {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  color: var(--text-muted);
+  font-weight: bold;
+  font-size: 14px;
+  gap: 16px;
+}
+
+.classic-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--accent-pink-light);
+  border-top-color: var(--primary-green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulseColor {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+/* Print Overrides for Boarding Ticket */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-ticket, #printable-ticket * {
+    visibility: visible;
+  }
+  #printable-ticket {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+  }
+  .ticket-card::before {
+    border-left: 2px dashed #000;
+  }
+}
