@@ -495,6 +495,68 @@ app.post('/api/admin/schedule', checkAdminAuth, (req, res) => {
   res.json({ success: true, schedule: newSchedule });
 });
 
+// Serve admin panel on /admin route (hidden - no nav link)
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+// Scanner Lookup & Instant Check-in (Protected)
+app.post('/api/admin/scan-lookup', checkAdminAuth, (req, res) => {
+  const { bookingCode } = req.body;
+
+  if (!bookingCode) {
+    return res.status(400).json({ error: "Missing booking code." });
+  }
+
+  const bookings = readBookings();
+  const bookingIndex = bookings.findIndex(b => b.bookingCode === bookingCode);
+
+  if (bookingIndex === -1) {
+    return res.status(404).json({ error: `No booking found for reference: ${bookingCode}` });
+  }
+
+  const booking = bookings[bookingIndex];
+
+  // Check if already checked in
+  if (booking.checkedIn) {
+    // Still return the booking data, but flag it
+    const tours = readSchedule();
+    const tour = tours.find(t => t.id === booking.tourId);
+    const slot = tour ? (tour.timeslots || []).find(s => s.id === booking.timeslotId) : null;
+    return res.status(200).json({
+      alreadyCheckedIn: true,
+      booking: {
+        ...booking,
+        sessionTitle: tour ? tour.title : 'Unknown Tour',
+        sessionDate: slot ? slot.date : '',
+        sessionTime: slot ? slot.time : ''
+      }
+    });
+  }
+
+  // Mark as checked in
+  bookings[bookingIndex].checkedIn = true;
+  const success = writeBookings(bookings);
+
+  if (!success) {
+    return res.status(500).json({ error: "Failed to update booking database." });
+  }
+
+  const tours = readSchedule();
+  const tour = tours.find(t => t.id === booking.tourId);
+  const slot = tour ? (tour.timeslots || []).find(s => s.id === booking.timeslotId) : null;
+
+  res.json({
+    alreadyCheckedIn: false,
+    booking: {
+      ...bookings[bookingIndex],
+      sessionTitle: tour ? tour.title : 'Unknown Tour',
+      sessionDate: slot ? slot.date : '',
+      sessionTime: slot ? slot.time : ''
+    }
+  });
+});
+
 // --- Server Startup ---
 
 if (!fs.existsSync(SCHEDULE_FILE)) {

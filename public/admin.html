@@ -105,6 +105,10 @@
               <p class="panel-subtitle">Filter, check-in, or manage registered passengers</p>
             </div>
             <div class="header-actions-group">
+              <button class="btn btn-primary btn-icon" id="open-scanner-btn">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 5A.5.5 0 0 1 1 5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 .5 5zm15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5zM3.854 4.146a.5.5 0 0 1 0 .708L1.707 7l2.147 2.146a.5.5 0 0 1-.708.708l-2.5-2.5a.5.5 0 0 1 0-.708l2.5-2.5a.5.5 0 0 1 .708 0zm8.292 0a.5.5 0 0 1 .708 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 0 1-.708-.708L14.293 7l-2.147-2.146a.5.5 0 0 1 0-.708zM4 4h8v8H4V4z"/></svg>
+                Scan Ticket QR
+              </button>
               <button class="btn btn-secondary btn-icon" id="export-csv-btn">
                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
                 Export CSV
@@ -260,12 +264,36 @@
     </div>
   </div>
 
+  <!-- QR Scanner Modal Overlay -->
+  <div class="scanner-modal-overlay" id="scanner-modal-overlay" role="dialog" aria-modal="true">
+    <div class="scanner-modal-card">
+      <div class="scanner-modal-header">
+        <h3 class="scanner-modal-title">QR TICKET SCANNER</h3>
+        <button class="scanner-close-btn" id="close-scanner-btn" aria-label="Close scanner">&times;</button>
+      </div>
+      <div class="scanner-viewport">
+        <div id="qr-reader"></div>
+      </div>
+      <!-- Scanner Result Container -->
+      <div class="scanner-result-card" id="scanner-result-card">
+        <div class="scanner-result-title" id="scanner-result-title">Result Title</div>
+        <div class="scanner-result-details" id="scanner-result-details">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+      <button class="btn btn-primary scan-again-btn" id="scan-again-btn" style="display: none; margin: 0 auto 24px auto;">Scan Another Ticket</button>
+    </div>
+  </div>
+
   <!-- Standard Footer -->
   <footer class="main-footer admin-footer">
     <div class="footer-container">
       <p>&copy; 2026 Dust2 Tours Agency. Operator Terminal Systems. Licensed Operations.</p>
     </div>
   </footer>
+
+  <!-- HTML5-QRCode Library CDN -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <!-- Admin System Frontend Logic JS -->
   <script src="js/admin.js"></script>

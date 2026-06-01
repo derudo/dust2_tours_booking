@@ -730,4 +730,204 @@ document.addEventListener('DOMContentLoaded', () => {
       return dateStr;
     }
   }
+
+  // --- QR Scanner Implementation ---
+  const openScannerBtn = document.getElementById('open-scanner-btn');
+  const scannerModalOverlay = document.getElementById('scanner-modal-overlay');
+  const closeScannerBtn = document.getElementById('close-scanner-btn');
+  const scannerResultCard = document.getElementById('scanner-result-card');
+  const scannerResultTitle = document.getElementById('scanner-result-title');
+  const scannerResultDetails = document.getElementById('scanner-result-details');
+  const scanAgainBtn = document.getElementById('scan-again-btn');
+
+  let html5QrCode = null;
+
+  // Web Audio sounds
+  function playSuccessBeep() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+      osc.stop(audioCtx.currentTime + 0.15);
+    } catch (e) {
+      console.warn("Audio Context blocked or not supported:", e);
+    }
+  }
+
+  function playErrorBeep() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime); // low buzz
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      osc.stop(audioCtx.currentTime + 0.3);
+    } catch (e) {
+      console.warn("Audio Context blocked or not supported:", e);
+    }
+  }
+
+  async function startScanner() {
+    scannerResultCard.className = 'scanner-result-card';
+    scannerResultCard.style.display = 'none';
+    scanAgainBtn.style.display = 'none';
+
+    try {
+      if (!html5QrCode) {
+        html5QrCode = new Html5Qrcode("qr-reader");
+      }
+      
+      const config = { 
+        fps: 10, 
+        qrbox: (width, height) => {
+          const size = Math.min(width, height) * 0.7;
+          return { width: size, height: size };
+        }
+      };
+
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        onQrSuccess
+      );
+    } catch (err) {
+      console.error("Camera startup failed:", err);
+      scannerResultCard.className = 'scanner-result-card error';
+      scannerResultCard.style.display = 'block';
+      scannerResultTitle.textContent = 'CAMERA ERROR';
+      scannerResultDetails.innerHTML = `<p style="color: #721C24;">Unable to access or stream from rear camera. Please ensure camera permissions are allowed.</p>`;
+    }
+  }
+
+  async function stopScanner() {
+    if (html5QrCode && html5QrCode.isScanning) {
+      try {
+        await html5QrCode.stop();
+      } catch (err) {
+        console.error("Failed to stop scanner camera stream:", err);
+      }
+    }
+  }
+
+  async function onQrSuccess(decodedText) {
+    // Immediately stop scanning so it doesn't trigger multiple API calls
+    await stopScanner();
+
+    // Call API to look up and check-in
+    try {
+      scannerResultCard.className = 'scanner-result-card';
+      scannerResultCard.style.display = 'none';
+
+      const response = await fetch('/api/admin/scan-lookup', {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ bookingCode: decodedText })
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        closeScannerDialog();
+        return;
+      }
+
+      const result = await response.json();
+
+      if (response.status === 404) {
+        playErrorBeep();
+        scannerResultCard.className = 'scanner-result-card error';
+        scannerResultCard.style.display = 'block';
+        scannerResultTitle.textContent = 'INVALID TICKET';
+        scannerResultDetails.innerHTML = `<p style="color: #721C24;">${result.error || "No booking matched this QR code reference."}</p>`;
+        scanAgainBtn.style.display = 'block';
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(result.error || "Server scan verification failed");
+      }
+
+      const { booking, alreadyCheckedIn } = result;
+
+      if (alreadyCheckedIn) {
+        playErrorBeep();
+        scannerResultCard.className = 'scanner-result-card already';
+        scannerResultCard.style.display = 'block';
+        scannerResultTitle.textContent = 'ALREADY CHECKED IN';
+        scannerResultDetails.innerHTML = `
+          <p style="color: #856404; font-weight: bold; margin-bottom: 6px;">⚠️ THIS BOARDING PASS WAS PREVIOUSLY SPAN-CHECKED!</p>
+          <div style="font-size: 12px; margin-top: 4px;">
+            <strong>Ref Code:</strong> ${booking.bookingCode}<br>
+            <strong>Passenger:</strong> ${booking.name}<br>
+            <strong>Excursion:</strong> ${booking.sessionTitle}<br>
+            <strong>Departure:</strong> ${formatDate(booking.sessionDate)} at ${booking.sessionTime}
+          </div>
+        `;
+      } else {
+        playSuccessBeep();
+        scannerResultCard.className = 'scanner-result-card success';
+        scannerResultCard.style.display = 'block';
+        scannerResultTitle.textContent = 'BOARDING PASSED';
+        scannerResultDetails.innerHTML = `
+          <p style="color: #1A3322; font-weight: bold; margin-bottom: 6px;">✅ BOARDING SPAN COMPLETED SUCCESSFULLY!</p>
+          <div style="font-size: 12px; margin-top: 4px;">
+            <strong>Ref Code:</strong> ${booking.bookingCode}<br>
+            <strong>Passenger:</strong> ${booking.name}<br>
+            <strong>Excursion:</strong> ${booking.sessionTitle}<br>
+            <strong>Departure:</strong> ${formatDate(booking.sessionDate)} at ${booking.sessionTime}
+          </div>
+        `;
+        // Refresh background stats and manifest lists
+        fetchAdminData();
+      }
+    } catch (err) {
+      console.error(err);
+      playErrorBeep();
+      scannerResultCard.className = 'scanner-result-card error';
+      scannerResultCard.style.display = 'block';
+      scannerResultTitle.textContent = 'SCAN FAILURE';
+      scannerResultDetails.innerHTML = `<p style="color: #721C24;">${err.message || "Failed to contact database terminal server."}</p>`;
+    }
+
+    scanAgainBtn.style.display = 'block';
+  }
+
+  function openScannerDialog() {
+    scannerModalOverlay.classList.add('active');
+    scannerModalOverlay.setAttribute('aria-hidden', 'false');
+    startScanner();
+  }
+
+  async function closeScannerDialog() {
+    scannerModalOverlay.classList.remove('active');
+    scannerModalOverlay.setAttribute('aria-hidden', 'true');
+    await stopScanner();
+  }
+
+  if (openScannerBtn) {
+    openScannerBtn.addEventListener('click', openScannerDialog);
+  }
+  if (closeScannerBtn) {
+    closeScannerBtn.addEventListener('click', closeScannerDialog);
+  }
+  if (scanAgainBtn) {
+    scanAgainBtn.addEventListener('click', startScanner);
+  }
 });

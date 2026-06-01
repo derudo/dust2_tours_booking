@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1A3322">
+  <title>DUST2 TOURS — Boarding Pass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Globals ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green-deep: #1A3322;
+      --green-mid: #264D35;
+      --green-light: #3A6B4A;
+      --pink: #DDA5A5;
+      --cream: #FAF7F0;
+      --cream-dim: #F0EDE5;
+      --mono: 'DM Mono', 'Courier New', Courier, monospace;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      background: var(--green-deep);
+      color: var(--cream);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* ── Background Texture ── */
+    body {
+      background:
+        radial-gradient(ellipse 120% 80% at 50% 0%, rgba(58,107,74,.35) 0%, transparent 60%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 4px,
+          rgba(255,255,255,.012) 4px,
+          rgba(255,255,255,.012) 5px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 4px,
+          rgba(255,255,255,.012) 4px,
+          rgba(255,255,255,.012) 5px
+        ),
+        var(--green-deep);
+    }
+
+    /* ── Page Wrapper ── */
+    .page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      padding: 24px 16px 40px;
+      animation: fadeUp .8s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Card Shell ── */
+    .card {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      border-radius: 20px;
+      overflow: visible;          /* allow notch pseudo-elements */
+      background: var(--cream);
+      color: var(--green-deep);
+      box-shadow:
+        0 4px 6px rgba(0,0,0,.15),
+        0 20px 50px rgba(0,0,0,.30),
+        0 0 0 1px rgba(255,255,255,.06);
+    }
+
+    /* ── Card inner clip (rounds content but keeps notches visible) ── */
+    .card-inner {
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    /* ── Notch Cutouts ── */
+    .card::before,
+    .card::after {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: var(--green-deep);
+      border-radius: 50%;
+      top: calc(56% - 11px);     /* sit on the dashed divider */
+      z-index: 5;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,.25);
+    }
+    .card::before { left: -11px; }
+    .card::after  { right: -11px; }
+
+    /* ── Header ── */
+    .card-header {
+      background:
+        linear-gradient(160deg, var(--green-deep) 0%, var(--green-mid) 100%);
+      padding: 28px 24px 22px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 6px,
+          rgba(255,255,255,.025) 6px,
+          rgba(255,255,255,.025) 7px
+        );
+      pointer-events: none;
+    }
+
+    .brand {
+      font-family: 'Anton', sans-serif;
+      font-size: 28px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cream);
+      line-height: 1;
+    }
+
+    .brand-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--pink);
+      border-radius: 50%;
+      vertical-align: middle;
+      margin: 0 2px;
+      position: relative;
+      top: -2px;
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--pink);
+    }
+
+    /* ── Body ── */
+    .card-body {
+      padding: 24px 24px 0;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(26,51,34,.45);
+      margin-bottom: 3px;
+    }
+
+    .field-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green-deep);
+      line-height: 1.25;
+    }
+
+    .field-value.small {
+      font-size: 15px;
+    }
+
+    /* Two-column row */
+    .row {
+      display: flex;
+      gap: 16px;
+    }
+    .row .field { flex: 1; }
+
+    /* ── Fare Badge ── */
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+      color: var(--cream);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 40px;
+    }
+
+    /* ── Boarding Ref ── */
+    .ref-value {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--green-deep);
+    }
+
+    /* ── Dashed Divider ── */
+    .divider {
+      border: none;
+      border-top: 2px dashed rgba(26,51,34,.15);
+      margin: 20px 24px;
+    }
+
+    /* ── QR Section ── */
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 24px 20px;
+    }
+
+    .qr-wrapper {
+      position: relative;
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow:
+        0 0 20px rgba(221,165,165,.2),
+        0 0 60px rgba(221,165,165,.08),
+        0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .qr-wrapper img {
+      display: block;
+      width: 180px;
+      height: 180px;
+      border-radius: 4px;
+      image-rendering: pixelated;
+    }
+
+    .qr-caption {
+      margin-top: 12px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(26,51,34,.35);
+    }
+
+    /* ── Footer ── */
+    .card-footer {
+      background: var(--cream-dim);
+      padding: 14px 24px;
+      text-align: center;
+      border-top: 1px solid rgba(26,51,34,.06);
+    }
+
+    .fine-print {
+      font-size: 10px;
+      line-height: 1.5;
+      color: rgba(26,51,34,.4);
+      letter-spacing: .3px;
+    }
+
+    /* ── Download Button ── */
+    .actions {
+      margin-top: 28px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      justify-content: center;
+      animation: fadeUp 1s cubic-bezier(.22,1,.36,1) .25s both;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--pink), #c98e8e);
+      color: var(--green-deep);
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      padding: 16px 36px;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+      box-shadow:
+        0 4px 20px rgba(221,165,165,.35),
+        0 1px 3px rgba(0,0,0,.12);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 6px 28px rgba(221,165,165,.45),
+        0 2px 6px rgba(0,0,0,.15);
+    }
+
+    .btn-download:active {
+      transform: translateY(0) scale(.98);
+      filter: brightness(.95);
+    }
+
+    .btn-download svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .btn-download.saving {
+      pointer-events: none;
+      opacity: .7;
+    }
+
+    /* ── Responsive Polish ── */
+    @media (max-width: 420px) {
+      .page { padding: 16px 10px 32px; }
+      .brand { font-size: 24px; letter-spacing: 3px; }
+      .field-value { font-size: 16px; }
+      .ref-value { font-size: 19px; }
+      .qr-wrapper img { width: 160px; height: 160px; }
+    }
+
+    @media (min-width: 600px) {
+      .card {
+        box-shadow:
+          0 8px 12px rgba(0,0,0,.12),
+          0 32px 80px rgba(0,0,0,.28),
+          0 0 0 1px rgba(255,255,255,.05);
+      }
+    }
+
+    /* ── Shimmer on header (subtle) ── */
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .card-header .brand {
+      background: linear-gradient(
+        100deg,
+        var(--cream) 0%,
+        var(--cream) 40%,
+        rgba(221,165,165,.6) 50%,
+        var(--cream) 60%,
+        var(--cream) 100%
+      );
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 6s ease-in-out infinite;
+    }
+
+    /* ── Print / Screenshot helpers ── */
+    @media print {
+      body { background: #fff; }
+      .actions { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+    <!-- ════ THE PASS CARD ════ -->
+    <div class="card" id="passCard">
+      <div class="card-inner">
+
+        <!-- Header -->
+        <div class="card-header">
+          <div class="brand">DUST2<span class="brand-dot"></span>TOURS</div>
+          <div class="subtitle">Boarding Pass</div>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body">
+
+          <div class="field">
+            <div class="field-label">Passenger Name</div>
+            <div class="field-value" id="paxName">—</div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">Expedition Route</div>
+            <div class="field-value small" id="tourName">—</div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <div class="field-label">Departure Date</div>
+              <div class="field-value small" id="depDate">—</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Time</div>
+              <div class="field-value small" id="depTime">—</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <div class="field-label">Fare Status</div>
+              <div><span class="badge">Complimentary</span></div>
+            </div>
+            <div class="field">
+              <div class="field-label">Boarding Ref</div>
+              <div class="ref-value" id="refCode">—</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Divider with notch alignment -->
+        <hr class="divider">
+
+        <!-- QR Code -->
+        <div class="qr-section">
+          <div class="qr-wrapper">
+            <img id="qrImg" src="" alt="QR Code — scan to verify booking" width="180" height="180">
+          </div>
+          <div class="qr-caption">Scan to verify</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer">
+          <p class="fine-print">
+            Present this pass at departure point. Each expedition is capped at 5&nbsp;passengers.<br>
+            Non-transferable &middot; Arrive 10&nbsp;min before departure.
+          </p>
+        </div>
+
+      </div><!-- /card-inner -->
+    </div><!-- /card -->
+
+    <!-- Download Button -->
+    <div class="actions">
+      <button class="btn-download" id="btnDownload" aria-label="Download pass as image">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download as Image
+      </button>
+    </div>
+  </div>
+
+  <!-- html2canvas from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <script>
+    /* ── Parse URL Params ── */
+    const params = new URLSearchParams(window.location.search);
+
+    const bookingCode = params.get('code')  || 'D2-0000';
+    const tourName    = params.get('tour')  || 'Unknown Expedition';
+    const slot        = params.get('slot')  || '—';
+    const time        = params.get('time')  || '—';
+    const paxName     = params.get('name')  || 'Guest';
+
+    /* ── Format the date nicely ── */
+    function formatDate(dateStr) {
+      try {
+        const d = new Date(dateStr + 'T00:00:00');
+        if (isNaN(d)) return dateStr;
+        return d.toLocaleDateString('en-GB', {
+          weekday: 'short',
+          day:     'numeric',
+          month:   'short',
+          year:    'numeric'
+        });
+      } catch {
+        return dateStr;
+      }
+    }
+
+    /* ── Format the time nicely ── */
+    function formatTime(timeStr) {
+      try {
+        const [h, m] = timeStr.split(':');
+        const d = new Date();
+        d.setHours(+h, +m);
+        return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+      } catch {
+        return timeStr;
+      }
+    }
+
+    /* ── Populate Card ── */
+    document.getElementById('paxName').textContent  = decodeURIComponent(paxName).toUpperCase();
+    document.getElementById('tourName').textContent  = decodeURIComponent(tourName);
+    document.getElementById('depDate').textContent   = formatDate(slot);
+    document.getElementById('depTime').textContent   = formatTime(time);
+    document.getElementById('refCode').textContent   = bookingCode;
+
+    /* ── QR Code ── */
+    const qrData = encodeURIComponent(bookingCode);
+    document.getElementById('qrImg').src =
+      `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&color=1A3322&bgcolor=FFFFFF&margin=1`;
+
+    /* ── Download as PNG ── */
+    const btn = document.getElementById('btnDownload');
+    btn.addEventListener('click', async () => {
+      btn.classList.add('saving');
+      btn.querySelector('svg').style.display = 'none';
+      const origText = btn.textContent;
+      btn.textContent = 'Saving…';
+
+      try {
+        const card = document.getElementById('passCard');
+        const canvas = await html2canvas(card, {
+          scale: 3,                    // high-res output
+          backgroundColor: null,       // transparent outside rounded card
+          useCORS: true,               // allow cross-origin QR image
+          logging: false,
+          borderRadius: 20
+        });
+
+        const link = document.createElement('a');
+        link.download = `dust2-pass-${bookingCode}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        console.error('Download failed:', err);
+        alert('Could not save image. Please take a screenshot instead.');
+      } finally {
+        btn.classList.remove('saving');
+        btn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download as Image
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

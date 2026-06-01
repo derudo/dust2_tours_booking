@@ -15,24 +15,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const formTimeslotId = document.getElementById('form-timeslot-id');
   const slotsLeftWarning = document.getElementById('slots-left-warning');
   
-  // Ticket Modal Elements
+  // Ticket Modal Elements (Vertical layout)
   const ticketModal = document.getElementById('ticket-modal');
   const ticketPassengerName = document.getElementById('ticket-passenger-name');
   const ticketTourTitle = document.getElementById('ticket-tour-title');
   const ticketTourDate = document.getElementById('ticket-tour-date');
   const ticketTourTime = document.getElementById('ticket-tour-time');
   const ticketBookingCode = document.getElementById('ticket-booking-code');
-  const ticketBarcodeNum = document.getElementById('ticket-barcode-num');
-  
-  const stubPassengerName = document.getElementById('stub-passenger-name');
-  const stubTourId = document.getElementById('stub-tour-id');
-  const stubBookingCode = document.getElementById('stub-booking-code');
+  const ticketQrCode = document.getElementById('ticket-qr-code');
   
   const closeTicketBtn = document.getElementById('close-ticket-btn');
-  const printTicketBtn = document.getElementById('print-ticket-btn');
+  const downloadTicketImgBtn = document.getElementById('download-ticket-img-btn');
+  const openWalletBtn = document.getElementById('open-wallet-btn');
 
   let activeTours = [];
   let selectedSlots = {}; // Tracks selected timeslotId per tourId
+  let currentBookingData = null; // Stores last booking for wallet/download
 
   // --- Fetch and Load Tours ---
   async function fetchSchedule() {
@@ -83,9 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
     tours.forEach(tour => {
       const card = document.createElement('article');
       card.className = 'tour-card big-brochure-card'; // spacious layout!
-      
-      // Postcard Image Frame - fallback to default forest-green map illustration if custom image not provided
-      const imageUrl = tour.image || 'images/default-tour.jpg';
       
       // Render timeslots as a grid of retro stamp buttons!
       let timeslotsHtml = '';
@@ -285,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- Success Boarding Ticket Render ---
+  // --- Success Boarding Ticket Render (Vertical) ---
   function showSuccessTicket(booking, tourId, timeslotId) {
     const tour = activeTours.find(t => t.id === tourId);
     if (!tour) return;
@@ -293,18 +288,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const slot = (tour.timeslots || []).find(s => s.id === timeslotId);
     if (!slot) return;
 
-    // Fill main ticket
+    // Store booking data for wallet/download
+    currentBookingData = {
+      booking,
+      tour,
+      slot
+    };
+
+    // Fill vertical ticket fields
     ticketPassengerName.textContent = booking.name;
     ticketTourTitle.textContent = tour.title;
     ticketTourDate.textContent = formatDate(slot.date);
     ticketTourTime.textContent = slot.time;
     ticketBookingCode.textContent = booking.bookingCode;
-    ticketBarcodeNum.textContent = booking.bookingCode;
 
-    // Fill tear-off stub
-    stubPassengerName.textContent = abbreviateName(booking.name);
-    stubTourId.textContent = tour.id.toUpperCase();
-    stubBookingCode.textContent = booking.bookingCode.substring(3); // Grab short version
+    // Generate real QR code
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(booking.bookingCode)}&bgcolor=FAF6F4&color=1A3322`;
+    ticketQrCode.src = qrUrl;
 
     // Show ticket modal
     ticketModal.classList.add('active');
@@ -319,14 +319,61 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   closeTicketBtn.addEventListener('click', closeTicketDialog);
-  printTicketBtn.addEventListener('click', () => {
-    window.print();
-  });
 
   ticketModal.addEventListener('click', (e) => {
     if (e.target === ticketModal) {
       closeTicketDialog();
     }
+  });
+
+  // --- Download Ticket as Image (html2canvas) ---
+  downloadTicketImgBtn.addEventListener('click', async () => {
+    const ticketEl = document.getElementById('printable-ticket');
+    if (!ticketEl) return;
+
+    try {
+      downloadTicketImgBtn.disabled = true;
+      downloadTicketImgBtn.textContent = 'Generating...';
+
+      const canvas = await html2canvas(ticketEl, {
+        backgroundColor: null,
+        scale: 2, // High-res for sharp mobile screenshots
+        useCORS: true, // Allow cross-origin QR code image
+        logging: false
+      });
+
+      const link = document.createElement('a');
+      const code = currentBookingData?.booking?.bookingCode || 'ticket';
+      link.download = `dust2_boarding_pass_${code}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+
+    } catch (err) {
+      console.error('Image download failed:', err);
+      alert('⚠️ Failed to generate ticket image. Please try again or take a screenshot.');
+    } finally {
+      downloadTicketImgBtn.disabled = false;
+      downloadTicketImgBtn.innerHTML = `
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+        Download Pass
+      `;
+    }
+  });
+
+  // --- Open Mobile Wallet Page ---
+  openWalletBtn.addEventListener('click', () => {
+    if (!currentBookingData) return;
+
+    const { booking, tour, slot } = currentBookingData;
+    const params = new URLSearchParams({
+      code: booking.bookingCode,
+      tour: tour.title,
+      slot: slot.date,
+      time: slot.time,
+      name: booking.name
+    });
+
+    window.open(`/wallet.html?${params.toString()}`, '_blank');
   });
 
   // --- Utility Formatting Helpers ---
@@ -359,14 +406,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
       return dateStr;
     }
-  }
-
-  function abbreviateName(fullName) {
-    const parts = fullName.trim().split(' ');
-    if (parts.length <= 1) return fullName;
-    const firstInitial = parts[0].substring(0, 1) + '.';
-    const lastName = parts[parts.length - 1];
-    return `${firstInitial} ${lastName}`;
   }
 
   fetchSchedule();

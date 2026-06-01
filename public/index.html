@@ -32,7 +32,6 @@
       </div>
       <nav class="nav-links">
         <a href="#tours-section" class="nav-item">Active Expeditions</a>
-        <a href="admin.html" class="nav-item admin-portal-btn">Operator Panel</a>
       </nav>
     </div>
   </header>
@@ -116,107 +115,82 @@
     </div>
   </div>
 
-  <!-- Success Boarding Pass Ticket View (Luggage Tag / Boarding Pass Style) -->
+  <!-- Success Boarding Pass Ticket View (Vertical Mobile-First Design) -->
   <div class="modal-overlay" id="ticket-modal" aria-hidden="true" role="dialog">
     <div class="ticket-container">
-      <div class="ticket-card" id="printable-ticket">
-        <div class="stub-notch-bottom"></div>
-        <!-- Main Boarding Ticket Part -->
-        <div class="ticket-main">
-          <div class="ticket-header">
-            <div class="ticket-logo-section">
-              <img src="images/logo.svg" class="ticket-mini-logo" alt="Dust2 Badge">
-              <div>
-                <div class="ticket-agency-name">DUST2 TOURS</div>
-                <div class="ticket-sub">OFFICIAL BOARDING PASS</div>
-              </div>
-            </div>
-            <div class="ticket-stamp-area">
-              <div class="vintage-stamp">PASSED</div>
+      <div class="ticket-card-vertical" id="printable-ticket">
+        <!-- Top Header Band -->
+        <div class="vticket-header">
+          <div class="vticket-brand">
+            <img src="images/logo.svg" class="vticket-logo" alt="Dust2 Badge">
+            <div>
+              <div class="vticket-agency">DUST2 TOURS</div>
+              <div class="vticket-type">BOARDING PASS</div>
             </div>
           </div>
+          <div class="vintage-stamp small">PASSED</div>
+        </div>
 
-          <div class="ticket-body">
-            <div class="ticket-column">
-              <div class="ticket-field">
-                <span class="ticket-label">PASSENGER NAME</span>
-                <span class="ticket-value" id="ticket-passenger-name">Gordon Freeman</span>
-              </div>
-              <div class="ticket-field">
-                <span class="ticket-label">EXPEDITION ROUTE</span>
-                <span class="ticket-value" id="ticket-tour-title">Grand Dust2 Archaeological Walk</span>
-              </div>
-            </div>
+        <!-- Notch Divider -->
+        <div class="vticket-notch-row">
+          <div class="vticket-notch left"></div>
+          <div class="vticket-dashed-line"></div>
+          <div class="vticket-notch right"></div>
+        </div>
 
-            <div class="ticket-column">
-              <div class="ticket-row-split">
-                <div class="ticket-field">
-                  <span class="ticket-label">DEPARTURE DATE</span>
-                  <span class="ticket-value" id="ticket-tour-date">2026-06-10</span>
-                </div>
-                <div class="ticket-field">
-                  <span class="ticket-label">DEPARTURE TIME</span>
-                  <span class="ticket-value" id="ticket-tour-time">10:00 AM</span>
-                </div>
-              </div>
-              <div class="ticket-row-split">
-                <div class="ticket-field">
-                  <span class="ticket-label">FARE STATUS</span>
-                  <span class="ticket-value highlight">COMPLIMENTARY</span>
-                </div>
-                <div class="ticket-field">
-                  <span class="ticket-label">BOARDING REF</span>
-                  <span class="ticket-value monospace" id="ticket-booking-code">D2-A9F8X4Z</span>
-                </div>
-              </div>
-            </div>
+        <!-- QR Code Section -->
+        <div class="vticket-qr-section">
+          <div class="vticket-qr-frame">
+            <img id="ticket-qr-code" class="vticket-qr-img" src="" alt="Boarding Pass QR Code">
           </div>
+          <span class="vticket-qr-label">SCAN AT DEPARTURE</span>
+        </div>
 
-          <div class="ticket-footer">
-            <div class="barcode-wrapper">
-              <div class="classic-barcode">
-                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-              </div>
-              <span class="barcode-number" id="ticket-barcode-num">D2-A9F8X4Z</span>
-            </div>
-            <div class="ticket-fineprint">
-              PRESENT TICKET 10 MINS PRIOR TO DEPARTURE AT PRIMARY ACCESS SPAWN. CAPPED AT 5 PASSENGERS MAX.
-            </div>
+        <!-- Passenger Info Grid -->
+        <div class="vticket-info-grid">
+          <div class="vticket-field full-width">
+            <span class="vticket-label">PASSENGER NAME</span>
+            <span class="vticket-value" id="ticket-passenger-name">Gordon Freeman</span>
+          </div>
+          <div class="vticket-field full-width">
+            <span class="vticket-label">EXPEDITION ROUTE</span>
+            <span class="vticket-value" id="ticket-tour-title">Grand Dust2 Archaeological Walk</span>
+          </div>
+          <div class="vticket-field">
+            <span class="vticket-label">DEPARTURE DATE</span>
+            <span class="vticket-value" id="ticket-tour-date">2026-06-10</span>
+          </div>
+          <div class="vticket-field">
+            <span class="vticket-label">DEPARTURE TIME</span>
+            <span class="vticket-value" id="ticket-tour-time">10:00 AM</span>
+          </div>
+          <div class="vticket-field">
+            <span class="vticket-label">FARE STATUS</span>
+            <span class="vticket-value vticket-badge">COMPLIMENTARY</span>
+          </div>
+          <div class="vticket-field">
+            <span class="vticket-label">BOARDING REF</span>
+            <span class="vticket-value monospace" id="ticket-booking-code">D2-A9F8X4Z</span>
           </div>
         </div>
 
-        <!-- Tear-off Luggage Tag Stub -->
-        <div class="ticket-stub">
-          <div class="stub-header">
-            <span>RECEIPT STUB</span>
-          </div>
-          <div class="stub-body">
-            <div class="ticket-field">
-              <span class="ticket-label">PASSENGER</span>
-              <span class="ticket-value compact" id="stub-passenger-name">G. Freeman</span>
-            </div>
-            <div class="ticket-field">
-              <span class="ticket-label">ROUTE ID</span>
-              <span class="ticket-value compact monospace" id="stub-tour-id">SESS-01</span>
-            </div>
-            <div class="ticket-field">
-              <span class="ticket-label">REF CODE</span>
-              <span class="ticket-value compact monospace" id="stub-booking-code">D2-A9F8</span>
-            </div>
-            <div class="stub-stamp">
-              <span>OK</span>
-            </div>
-          </div>
+        <!-- Bottom Fine Print -->
+        <div class="vticket-footer">
+          PRESENT THIS PASS 10 MINUTES PRIOR TO DEPARTURE • MAX 5 PASSENGERS
         </div>
       </div>
 
       <!-- Ticket Actions -->
       <div class="ticket-modal-actions">
-        <button class="btn btn-secondary btn-icon" id="print-ticket-btn">
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2.5 2.5 0 0 0 0 5h6a2.5 2.5 0 0 0 0-5H5z"/></svg>
-          Print Boarding Ticket
+        <button class="btn btn-secondary btn-icon" id="download-ticket-img-btn">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+          Download Pass
         </button>
-        <button class="btn btn-primary" id="close-ticket-btn">Return to Agency</button>
+        <button class="btn btn-primary btn-icon" id="open-wallet-btn">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M0 3a2 2 0 0 1 2-2h13.5a.5.5 0 0 1 0 1H15v2a1 1 0 0 1 1 1v8.5a1.5 1.5 0 0 1-1.5 1.5h-12A2.5 2.5 0 0 1 0 12.5V3zm1 1.732V12.5A1.5 1.5 0 0 0 2.5 14h12a.5.5 0 0 0 .5-.5V5H2a1.99 1.99 0 0 1-1-.268zM1 3a1 1 0 0 0 1 1h12V2H2a1 1 0 0 0-1 1z"/></svg>
+          Mobile Wallet
+        </button>
+        <button class="btn btn-secondary" id="close-ticket-btn">Close</button>
       </div>
     </div>
   </div>
@@ -232,6 +206,8 @@
     </div>
   </footer>
 
+  <!-- html2canvas for image download -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <!-- Application Frontend Logic JS -->
   <script src="js/app.js"></script>
 </body>

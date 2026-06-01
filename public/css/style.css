@@ -843,275 +843,262 @@ a {
 }
 
 /* ==========================================================================
-   VINTAGE BOARDING PASS TICKET VIEW (Dusty Pink background layout)
+   VERTICAL BOARDING PASS TICKET VIEW (Mobile-First)
    ========================================================================== */
 .ticket-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  max-width: 800px;
+  gap: 20px;
+  max-width: 420px;
   width: 100%;
   animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
 }
 
-.ticket-card {
-  display: flex;
-  background-color: var(--accent-pink); /* Solid Dusty Pink ticket background! */
+.ticket-card-vertical {
+  background-color: var(--bg-cream);
   border: var(--border-thick);
-  border-radius: 8px;
-  box-shadow: 0 20px 50px rgba(26,51,34,0.4);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(26,51,34,0.45);
   width: 100%;
-  position: relative;
   overflow: hidden;
   color: var(--primary-green);
-}
-
-/* Dotted tear-off line */
-.ticket-card::before {
-  content: "";
-  position: absolute;
-  right: 200px;
-  top: 0;
-  bottom: 0;
-  border-left: var(--border-dashed);
-  z-index: 10;
-}
-
-/* Notches representation */
-.ticket-card::after {
-  content: "";
-  position: absolute;
-  right: 188px;
-  top: -14px;
-  width: 24px;
-  height: 24px;
-  background-color: rgba(26, 51, 34, 0.75);
-  border-radius: 50%;
-  border: var(--border-thick);
-  z-index: 10;
-}
-.ticket-card .stub-notch-bottom {
-  position: absolute;
-  right: 188px;
-  bottom: -14px;
-  width: 24px;
-  height: 24px;
-  background-color: rgba(26, 51, 34, 0.75);
-  border-radius: 50%;
-  border: var(--border-thick);
-  z-index: 10;
-}
-
-/* Ticket Main Section */
-.ticket-main {
-  flex-grow: 1;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.ticket-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px dashed rgba(26,51,34,0.25);
-  padding-bottom: 16px;
-}
-
-.ticket-logo-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.ticket-mini-logo {
-  width: 40px;
-  height: 40px;
-}
-.ticket-agency-name {
-  font-family: var(--font-headings);
-  font-size: 22px;
-  line-height: 1;
-  letter-spacing: 1px;
-}
-.ticket-sub {
-  font-size: 10px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  color: var(--primary-green-light);
-}
-
-/* Vintage ink stamp effect */
-.ticket-stamp-area {
   position: relative;
 }
-.vintage-stamp {
-  border: 4px double #8C4040;
-  color: #8C4040;
-  font-family: var(--font-headings);
-  font-size: 18px;
-  letter-spacing: 2px;
-  padding: 4px 14px;
-  border-radius: 4px;
-  transform: rotate(-10deg);
-  font-weight: bold;
-  opacity: 0.8;
-  text-transform: uppercase;
-}
 
-.ticket-body {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 24px;
-}
-
-.ticket-column {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.ticket-row-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.ticket-field {
-  display: flex;
-  flex-direction: column;
-}
-.ticket-label {
-  font-size: 9px;
-  font-weight: bold;
-  color: var(--primary-green-light);
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
-}
-.ticket-value {
-  font-family: var(--font-headings);
-  font-size: 18px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-.ticket-value.highlight {
+/* Header Band */
+.vticket-header {
   background-color: var(--primary-green);
   color: var(--bg-cream);
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 4px;
-  font-size: 13px;
-  width: fit-content;
-  letter-spacing: 1px;
-}
-.ticket-value.monospace {
-  font-family: monospace;
-  font-weight: bold;
-}
-
-.ticket-footer {
+  padding: 20px 24px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  border-top: 2px dashed rgba(26,51,34,0.25);
-  padding-top: 16px;
-  margin-top: auto;
+  align-items: center;
 }
 
-.barcode-wrapper {
+.vticket-brand {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.classic-barcode {
-  display: flex;
-  height: 34px;
-  align-items: stretch;
-}
-.classic-barcode span {
-  width: 2px;
-  background-color: var(--primary-green);
-  margin-right: 1px;
-}
-.classic-barcode span:nth-child(3n) {
-  width: 4px;
-}
-.classic-barcode span:nth-child(5n) {
-  width: 1px;
-}
-.barcode-number {
-  font-family: monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.ticket-fineprint {
-  font-size: 8px;
-  color: var(--primary-green-light);
-  max-width: 290px;
-  line-height: 1.25;
-  text-align: right;
-}
-
-/* Tear-off Stub Section */
-.ticket-stub {
-  width: 200px;
-  padding: 32px 20px;
-  background-color: rgba(26,51,34,0.05); /* visual offset */
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.stub-header {
-  border-bottom: 2px dashed rgba(26,51,34,0.25);
-  padding-bottom: 8px;
-  font-family: var(--font-headings);
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  color: var(--primary-green-light);
-  text-align: center;
-}
-
-.stub-body {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 12px;
-  position: relative;
-  height: 100%;
 }
 
-.ticket-value.compact {
-  font-size: 14px;
-}
-
-.stub-stamp {
-  margin-top: auto;
-  border: 2px solid var(--primary-green);
+.vticket-logo {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  width: 46px;
-  height: 46px;
+  border: 2px solid var(--accent-pink);
+  background-color: var(--bg-cream);
+  padding: 1px;
+}
+
+.vticket-agency {
+  font-family: var(--font-headings);
+  font-size: 20px;
+  letter-spacing: 1.5px;
+  line-height: 1;
+}
+
+.vticket-type {
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: var(--accent-pink);
+  margin-top: 2px;
+}
+
+.vintage-stamp.small {
+  border: 3px double #C48E8E;
+  color: #C48E8E;
+  font-family: var(--font-headings);
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 2px 10px;
+  border-radius: 3px;
+  transform: rotate(-8deg);
+  opacity: 0.85;
+}
+
+/* Notch Divider Row */
+.vticket-notch-row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 24px;
+  margin: 0 -3px; /* Bleed into border */
+}
+
+.vticket-notch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(26, 51, 34, 0.75);
+  border: 3px solid var(--primary-green);
+  flex-shrink: 0;
+  z-index: 2;
+}
+.vticket-notch.left {
+  margin-left: -12px;
+}
+.vticket-notch.right {
+  margin-right: -12px;
+}
+
+.vticket-dashed-line {
+  flex-grow: 1;
+  border-top: 2px dashed rgba(26,51,34,0.2);
+}
+
+/* QR Code Section */
+.vticket-qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 24px 16px 24px;
+  gap: 8px;
+}
+
+.vticket-qr-frame {
+  width: 180px;
+  height: 180px;
+  padding: 12px;
+  background-color: #FFF;
+  border: var(--border-thick);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-headings);
-  font-size: 14px;
-  letter-spacing: 1px;
-  transform: rotate(15deg);
-  opacity: 0.7;
-  margin-left: auto;
+  box-shadow: 0 0 30px rgba(221, 165, 165, 0.35), 0 4px 12px rgba(26,51,34,0.1);
 }
 
+.vticket-qr-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.vticket-qr-label {
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Info Grid */
+.vticket-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0 24px 20px 24px;
+  border-top: 2px dashed rgba(26,51,34,0.15);
+  margin: 0 24px;
+  padding-top: 20px;
+}
+
+.vticket-field {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+.vticket-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.vticket-label {
+  font-size: 9px;
+  font-weight: bold;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.vticket-value {
+  font-family: var(--font-headings);
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--primary-green);
+  line-height: 1.2;
+}
+
+.vticket-value.monospace {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: 1.5px;
+}
+
+.vticket-badge {
+  background-color: var(--primary-green);
+  color: var(--bg-cream) !important;
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 11px !important;
+  letter-spacing: 1px;
+  width: fit-content;
+}
+
+/* Footer Fine Print */
+.vticket-footer {
+  background-color: rgba(26,51,34,0.04);
+  border-top: 2px dashed rgba(26,51,34,0.15);
+  padding: 14px 24px;
+  text-align: center;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Ticket Action Buttons */
 .ticket-modal-actions {
   display: flex;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
+  flex-wrap: wrap;
 }
 .ticket-modal-actions .btn {
   flex: 1;
+  min-width: 120px;
+  font-size: 11px;
+  padding: 12px 16px;
+}
+
+/* Mobile responsive for ticket */
+@media (max-width: 480px) {
+  .ticket-container {
+    padding: 0 8px;
+  }
+  .vticket-header {
+    padding: 16px 18px;
+  }
+  .vticket-agency {
+    font-size: 17px;
+  }
+  .vticket-qr-section {
+    padding: 20px 18px 12px 18px;
+  }
+  .vticket-qr-frame {
+    width: 160px;
+    height: 160px;
+  }
+  .vticket-info-grid {
+    margin: 0 18px;
+    padding: 16px 18px 16px 18px;
+  }
+  .vticket-value {
+    font-size: 14px;
+  }
+  .ticket-modal-actions {
+    flex-direction: column;
+  }
+  .ticket-modal-actions .btn {
+    width: 100%;
+  }
 }
 
 /* ==========================================================================
@@ -1217,6 +1204,8 @@ a {
   border-bottom: var(--border-dashed);
   padding-bottom: 20px;
   margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .panel-title {
@@ -1232,6 +1221,7 @@ a {
 .header-actions-group {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 /* Filters Bar */
@@ -1452,6 +1442,137 @@ input:checked + .toggle-slider:before {
 }
 
 /* ==========================================================================
+   QR SCANNER MODAL (Admin Camera Viewport)
+   ========================================================================== */
+.scanner-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(26, 51, 34, 0.85);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  backdrop-filter: blur(5px);
+}
+.scanner-modal-overlay.active {
+  display: flex;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.scanner-modal-card {
+  background-color: var(--bg-cream);
+  border: var(--border-double);
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+}
+
+.scanner-modal-header {
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scanner-modal-title {
+  font-family: var(--font-headings);
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.scanner-close-btn {
+  background: none;
+  border: 2px solid var(--accent-pink);
+  color: var(--accent-pink);
+  font-size: 22px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.scanner-close-btn:hover {
+  background-color: var(--accent-pink);
+  color: var(--primary-green);
+}
+
+.scanner-viewport {
+  padding: 24px;
+  position: relative;
+  min-height: 300px;
+}
+
+.scanner-viewport #qr-reader {
+  width: 100% !important;
+  border: var(--border-thick) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+/* Scanner result cards */
+.scanner-result-card {
+  margin: 16px 24px 24px 24px;
+  padding: 20px;
+  border-radius: 8px;
+  border: var(--border-thick);
+  display: none;
+  animation: slideUp 0.3s ease;
+}
+
+.scanner-result-card.success {
+  display: block;
+  background-color: #D4EDDA;
+  border-color: var(--primary-green);
+}
+.scanner-result-card.already {
+  display: block;
+  background-color: #FFF3CD;
+  border-color: #856404;
+}
+.scanner-result-card.error {
+  display: block;
+  background-color: #F8D7DA;
+  border-color: #721C24;
+}
+
+.scanner-result-title {
+  font-family: var(--font-headings);
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.scanner-result-card.success .scanner-result-title { color: var(--primary-green); }
+.scanner-result-card.already .scanner-result-title { color: #856404; }
+.scanner-result-card.error .scanner-result-title { color: #721C24; }
+
+.scanner-result-details {
+  font-size: 13px;
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+.scanner-result-details strong {
+  display: inline-block;
+  min-width: 100px;
+  color: var(--primary-green);
+}
+
+/* Scan another button */
+.scan-again-btn {
+  margin: 0 24px 24px 24px;
+  width: calc(100% - 48px);
+}
+
+/* ==========================================================================
    TOAST NOTIFICATION COMPONENT
    ========================================================================== */
 .toast-banner {
@@ -1572,7 +1693,13 @@ input:checked + .toggle-slider:before {
   to { opacity: 1; }
 }
 
-/* Print Overrides for Boarding Ticket */
+@keyframes scanFlash {
+  0% { box-shadow: 0 0 0 0 rgba(26, 51, 34, 0.6); }
+  70% { box-shadow: 0 0 0 20px rgba(26, 51, 34, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(26, 51, 34, 0); }
+}
+
+/* Print Overrides for Vertical Boarding Ticket */
 @media print {
   body * {
     visibility: hidden;
@@ -1587,8 +1714,5 @@ input:checked + .toggle-slider:before {
     width: 100%;
     border: none;
     box-shadow: none;
-  }
-  .ticket-card::before {
-    border-left: 2px dashed #000;
   }
 }
