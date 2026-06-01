@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalTourTitle = document.getElementById('modal-tour-title');
   const modalTourDate = document.getElementById('modal-tour-date');
   const modalTourTime = document.getElementById('modal-tour-time');
-  const formSessionId = document.getElementById('form-session-id');
+  const formTourId = document.getElementById('form-tour-id');
+  const formTimeslotId = document.getElementById('form-timeslot-id');
   const slotsLeftWarning = document.getElementById('slots-left-warning');
   
   // Ticket Modal Elements
@@ -30,7 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeTicketBtn = document.getElementById('close-ticket-btn');
   const printTicketBtn = document.getElementById('print-ticket-btn');
 
-  let activeSessions = [];
+  let activeTours = [];
+  let selectedSlots = {}; // Tracks selected timeslotId per tourId
 
   // --- Fetch and Load Tours ---
   async function fetchSchedule() {
@@ -40,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!response.ok) {
         throw new Error("Failed to load active schedule");
       }
-      activeSessions = await response.json();
-      renderSchedule(activeSessions);
+      activeTours = await response.json();
+      renderSchedule(activeTours);
     } catch (error) {
       console.error(error);
       scheduleGrid.innerHTML = `
@@ -64,8 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  function renderSchedule(sessions) {
-    if (sessions.length === 0) {
+  function renderSchedule(tours) {
+    if (tours.length === 0) {
       scheduleGrid.innerHTML = `
         <div class="loading-spinner-wrapper">
           <div style="font-size: 32px;">📭</div>
@@ -78,48 +80,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
     scheduleGrid.innerHTML = '';
     
-    sessions.forEach(session => {
+    tours.forEach(tour => {
       const card = document.createElement('article');
-      card.className = 'tour-card';
+      card.className = 'tour-card big-brochure-card'; // spacious layout!
       
-      const isFullyBooked = session.remainingSlots <= 0;
-      const capacityStatusText = isFullyBooked 
-        ? 'FULLY BOOKED' 
-        : `${session.remainingSlots} SLOTS LEFT`;
+      // Postcard Image Frame - fallback to default forest-green map illustration if custom image not provided
+      const imageUrl = tour.image || 'images/default-tour.jpg';
       
-      const bannerClass = isFullyBooked 
-        ? 'tour-capacity-banner fully-booked' 
-        : 'tour-capacity-banner';
+      // Render timeslots as a grid of retro stamp buttons!
+      let timeslotsHtml = '';
+      if (!tour.timeslots || tour.timeslots.length === 0) {
+        timeslotsHtml = `<p class="no-slots-help">No active departures scheduled for this route.</p>`;
+      } else {
+        timeslotsHtml = `
+          <div class="timeslot-selector-label">Select Your Departure Session:</div>
+          <div class="timeslot-buttons-grid">
+        `;
+        
+        tour.timeslots.forEach(slot => {
+          const isFullyBooked = slot.remainingSlots <= 0;
+          let badgeText = '';
+          if (isFullyBooked) {
+            badgeText = ' (Full)';
+          } else if (slot.remainingSlots <= 2) {
+            badgeText = ` (${slot.remainingSlots} left)`;
+          }
+          
+          const isSelected = selectedSlots[tour.id] === slot.id;
+          const activeClass = isSelected ? 'selected' : '';
+          const disabledAttr = isFullyBooked ? 'disabled' : '';
+          
+          timeslotsHtml += `
+            <button class="timeslot-stamp-btn ${activeClass}" 
+              data-tour-id="${tour.id}" 
+              data-slot-id="${slot.id}" 
+              ${disabledAttr}>
+              <span class="slot-time">${slot.time}</span>
+              <span class="slot-date">${formatDateCompact(slot.date)}${badgeText}</span>
+            </button>
+          `;
+        });
+        
+        timeslotsHtml += `</div>`;
+      }
 
-      // Highlight urgent availability (e.g. 1 or 2 slots remaining)
-      const warningStyle = (!isFullyBooked && session.remainingSlots <= 2)
-        ? 'color: #8C4040; font-weight: bold;'
-        : '';
+      // Check if checkout button should be active
+      const hasSlots = tour.timeslots && tour.timeslots.length > 0;
+      const checkoutSelected = selectedSlots[tour.id];
 
       card.innerHTML = `
-        <div class="tour-card-header">
-          <h4 class="tour-title">${session.title}</h4>
-          <div class="tour-meta-list">
-            <div class="tour-meta-item">
-              <span>📅 ${formatDate(session.date)}</span>
+        <div class="tour-postcard-image-wrapper">
+          <!-- Double border framing representation -->
+          <div class="postcard-image-inner">
+            <div class="vintage-camera-placeholder">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1v6zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 2.172 4H2z"/><path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/></svg>
+              <span>DUST2 HERITAGE SITE</span>
             </div>
-            <div class="tour-meta-item">
-              <span>⏰ ${session.time}</span>
-            </div>
+            <div class="postcard-stamp-flair">PASSPORTS APPROVED</div>
           </div>
         </div>
+        
+        <div class="tour-card-header">
+          <h4 class="tour-title">${tour.title}</h4>
+        </div>
         <div class="tour-card-body">
-          <p class="tour-description">${session.description}</p>
+          <p class="tour-description">${tour.description}</p>
           
-          <div class="${bannerClass}">
-            <span class="capacity-label">Manifest Slots</span>
-            <span class="capacity-status" style="${warningStyle}">${capacityStatusText}</span>
-          </div>
+          <!-- Dynamic Timeslots Grid Matrix -->
+          ${timeslotsHtml}
           
-          <button class="btn btn-primary w-full" 
-            data-id="${session.id}" 
-            ${isFullyBooked ? 'disabled' : ''}>
-            ${isFullyBooked ? 'Departure Closed' : 'Request Boarding Pass'}
+          <button class="btn btn-primary w-full checkout-boarding-btn" 
+            data-tour-id="${tour.id}" 
+            ${!hasSlots ? 'disabled' : ''}>
+            ${checkoutSelected ? 'Request Boarding Pass' : 'Select Departure Above'}
           </button>
         </div>
       `;
@@ -127,41 +160,65 @@ document.addEventListener('DOMContentLoaded', () => {
       scheduleGrid.appendChild(card);
     });
 
-    // Add event listeners to buttons
-    const bookButtons = scheduleGrid.querySelectorAll('.btn-primary');
-    bookButtons.forEach(btn => {
+    // Attach timeslot click listeners
+    scheduleGrid.querySelectorAll('.timeslot-stamp-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        const sessionId = e.target.getAttribute('data-id');
-        openBookingDialog(sessionId);
+        const targetBtn = e.target.closest('.timeslot-stamp-btn');
+        const tourId = targetBtn.getAttribute('data-tour-id');
+        const slotId = targetBtn.getAttribute('data-slot-id');
+        
+        // Select slot
+        selectedSlots[tourId] = slotId;
+        
+        // Quiet rerender to update button states and highlight selection
+        renderSchedule(activeTours);
+      });
+    });
+
+    // Attach checkout click listeners
+    scheduleGrid.querySelectorAll('.checkout-boarding-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tourId = e.target.closest('.checkout-boarding-btn').getAttribute('data-tour-id');
+        const slotId = selectedSlots[tourId];
+        
+        if (!slotId) {
+          alert('⚠️ Passenger Alert: Please click on one of the available timeslots above before booking!');
+          return;
+        }
+        
+        openBookingDialog(tourId, slotId);
       });
     });
   }
 
   // --- Modal Controllers ---
-  function openBookingDialog(sessionId) {
-    const session = activeSessions.find(s => s.id === sessionId);
-    if (!session) return;
+  function openBookingDialog(tourId, slotId) {
+    const tour = activeTours.find(t => t.id === tourId);
+    if (!tour) return;
 
-    formSessionId.value = session.id;
-    modalTourTitle.textContent = session.title;
-    modalTourDate.textContent = formatDate(session.date);
-    modalTourTime.textContent = session.time;
+    const slot = (tour.timeslots || []).find(s => s.id === slotId);
+    if (!slot) return;
+
+    formTourId.value = tour.id;
+    formTimeslotId.value = slot.id;
+    
+    modalTourTitle.textContent = tour.title;
+    modalTourDate.textContent = formatDate(slot.date);
+    modalTourTime.textContent = slot.time;
     
     // Customize warning text based on remaining slots
-    if (session.remainingSlots <= 2) {
-      slotsLeftWarning.textContent = `CRITICAL DEPARTURE: Only ${session.remainingSlots} seat manifests remain!`;
+    if (slot.remainingSlots <= 2) {
+      slotsLeftWarning.textContent = `CRITICAL EXPEDITION: Only ${slot.remainingSlots} seat manifests remain!`;
       slotsLeftWarning.style.backgroundColor = '#F0A5A5';
       slotsLeftWarning.style.color = '#5C1E1E';
     } else {
-      slotsLeftWarning.textContent = 'Only 5 slots total per expedition. Secure yours now.';
+      slotsLeftWarning.textContent = 'Only 5 slots total per departure. Secure yours now.';
       slotsLeftWarning.style.backgroundColor = 'var(--accent-pink-light)';
       slotsLeftWarning.style.color = 'var(--primary-green)';
     }
 
-    // Reset Form fields
     bookingForm.reset();
 
-    // Show modal
     bookingModal.classList.add('active');
     bookingModal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden'; // Lock scrolling
@@ -177,7 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
   bookingForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const sessionId = formSessionId.value;
+    const tourId = formTourId.value;
+    const timeslotId = formTimeslotId.value;
     const name = document.getElementById('passenger-name').value;
     const email = document.getElementById('passenger-email').value;
     const phone = document.getElementById('passenger-phone').value;
@@ -191,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ sessionId, name, email, phone })
+        body: JSON.stringify({ tourId, timeslotId, name, email, phone })
       });
 
       const result = await response.json();
@@ -202,7 +260,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Successful Booking!
       closeBookingDialog();
-      showSuccessTicket(result, sessionId);
+      showSuccessTicket(result, tourId, timeslotId);
+      
+      // Clear selection
+      selectedSlots[tourId] = null;
       fetchSchedule(); // Refresh layout background
 
     } catch (error) {
@@ -225,21 +286,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- Success Boarding Ticket Render ---
-  function showSuccessTicket(booking, sessionId) {
-    const session = activeSessions.find(s => s.id === sessionId);
-    if (!session) return;
+  function showSuccessTicket(booking, tourId, timeslotId) {
+    const tour = activeTours.find(t => t.id === tourId);
+    if (!tour) return;
+
+    const slot = (tour.timeslots || []).find(s => s.id === timeslotId);
+    if (!slot) return;
 
     // Fill main ticket
     ticketPassengerName.textContent = booking.name;
-    ticketTourTitle.textContent = session.title;
-    ticketTourDate.textContent = formatDate(session.date);
-    ticketTourTime.textContent = session.time;
+    ticketTourTitle.textContent = tour.title;
+    ticketTourDate.textContent = formatDate(slot.date);
+    ticketTourTime.textContent = slot.time;
     ticketBookingCode.textContent = booking.bookingCode;
     ticketBarcodeNum.textContent = booking.bookingCode;
 
     // Fill tear-off stub
     stubPassengerName.textContent = abbreviateName(booking.name);
-    stubTourId.textContent = session.id.toUpperCase();
+    stubTourId.textContent = tour.id.toUpperCase();
     stubBookingCode.textContent = booking.bookingCode.substring(3); // Grab short version
 
     // Show ticket modal
@@ -259,7 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.print();
   });
 
-  // Close ticket on outside click
   ticketModal.addEventListener('click', (e) => {
     if (e.target === ticketModal) {
       closeTicketDialog();
@@ -283,6 +346,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function formatDateCompact(dateStr) {
+    try {
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return dateStr;
+      const date = new Date(parts[0], parts[1] - 1, parts[2]);
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        weekday: 'short'
+      });
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
   function abbreviateName(fullName) {
     const parts = fullName.trim().split(' ');
     if (parts.length <= 1) return fullName;
@@ -291,6 +369,5 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${firstInitial} ${lastName}`;
   }
 
-  // --- Initial Launch ---
   fetchSchedule();
 });

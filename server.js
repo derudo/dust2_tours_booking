@@ -9,6 +9,9 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Admin password configuration
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'dust2admin';
+
 // Enable CORS and JSON parsing
 app.use(cors());
 app.use(express.json());
@@ -33,9 +36,24 @@ const SCHEDULE_FILE = path.join(DATA_DIR, 'schedule.json');
 const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
 const EMAIL_LOG_FILE = path.join(DATA_DIR, 'sent_emails.log');
 
+// --- Security Middleware for Admin Access ---
+function checkAdminAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ error: "Unauthorized. Operator passcode required." });
+  }
+
+  const token = authHeader.split(' ')[1]; // Expecting "Bearer <password>"
+  if (token !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "Unauthorized. Invalid operator passcode." });
+  }
+
+  next();
+}
+
 // --- Helper Functions for File Database Operations ---
 
-// Read active schedule
+// Read active schedule of tours
 function readSchedule() {
   try {
     if (!fs.existsSync(SCHEDULE_FILE)) {
@@ -74,7 +92,7 @@ function readBookings() {
   }
 }
 
-// Atomic write to bookings file using a temporary file
+// Atomic write to bookings file
 function writeBookings(bookings) {
   const tempFile = `${BOOKINGS_FILE}.tmp`;
   try {
@@ -91,8 +109,6 @@ function writeBookings(bookings) {
 }
 
 // --- Sequential Queue / Lock for Safe Concurrent Bookings ---
-// In Node.js, asynchronous operations like fs.readFile could allow race conditions.
-// We implement a simple queue lock to process booking requests sequentially.
 let bookingQueue = Promise.resolve();
 
 function enqueueBookingTask(taskFn) {
@@ -102,7 +118,6 @@ function enqueueBookingTask(taskFn) {
       .then(resolve)
       .catch((err) => {
         reject(err);
-        // Recover queue from failures
       });
   });
 }
@@ -124,8 +139,11 @@ async function initMailer() {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      tls: {
+        rejectUnauthorized: false // CRITICAL: Fixes Porkbun/domain registrar certificate rejections!
+      }
     });
-    console.log(`[SMTP Mailer] Production SMTP Mailer configured successfully.`);
+    console.log(`[SMTP Mailer] Production SMTP configured successfully (with TLS fallback).`);
   } else {
     // Dynamic fallback: Create a free Ethereal test account so that email confirmations WORK instantly out of the box!
     try {
@@ -149,7 +167,7 @@ async function initMailer() {
 
 initMailer();
 
-async function sendBookingConfirmationEmail(booking, session) {
+async function sendBookingConfirmationEmail(booking, tour, slot) {
   const emailHtml = `
     <div style="font-family: 'DM Sans', sans-serif; background-color: #FAF7F0; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; color: #1A3322; border: 3px solid #1A3322; box-shadow: 0 8px 0 rgba(26,51,34,0.15);">
       <div style="text-align: center; border-bottom: 2px dashed #1A3322; padding-bottom: 20px; margin-bottom: 25px;">
@@ -172,15 +190,15 @@ async function sendBookingConfirmationEmail(booking, session) {
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Tour Route</td>
-          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${session.title}</td>
+          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${tour.title}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Departure Date</td>
-          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${session.date}</td>
+          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${slot.date}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Departure Time</td>
-          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${session.time}</td>
+          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${slot.time}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Ticket Reference</td>
@@ -198,7 +216,7 @@ async function sendBookingConfirmationEmail(booking, session) {
   const logText = `
 [${new Date().toISOString()}] EMAIL SENT TO: ${booking.email}
 Subject: Booking Confirmed - Reference: ${booking.bookingCode}
-Tour: ${session.title} (${session.date} @ ${session.time})
+Tour: ${tour.title} (Departure: ${slot.date} @ ${slot.time})
 Passenger: ${booking.name}
 ------------------------------------------------------------
 `;
@@ -239,58 +257,72 @@ Passenger: ${booking.name}
 
 // --- Customer API Endpoints ---
 
-// Get active schedule with remaining slots
+// Get active schedule with remaining slots per individual timeslot
 app.get('/api/schedule', (req, res) => {
-  const sessions = readSchedule();
+  const tours = readSchedule();
   const bookings = readBookings();
 
-  const enrichedSessions = sessions.map(session => {
-    const bookedCount = bookings.filter(b => b.sessionId === session.id).length;
-    const remainingSlots = Math.max(0, (session.maxSlots || 5) - bookedCount);
+  // Compute remaining slots for each timeslot inside each tour
+  const enrichedTours = tours.map(tour => {
+    const enrichedTimeslots = (tour.timeslots || []).map(slot => {
+      const bookedCount = bookings.filter(b => b.timeslotId === slot.id).length;
+      const remainingSlots = Math.max(0, (slot.maxSlots || 5) - bookedCount);
+      return {
+        ...slot,
+        bookedCount,
+        remainingSlots
+      };
+    });
+
     return {
-      ...session,
-      bookedCount,
-      remainingSlots
+      ...tour,
+      timeslots: enrichedTimeslots
     };
   });
 
-  res.json(enrichedSessions);
+  res.json(enrichedTours);
 });
 
-// Book a slot (Processed through sequential queue for concurrency safety)
+// Book a timeslot (Processed through queue for safety)
 app.post('/api/book', (req, res) => {
-  const { sessionId, name, email, phone } = req.body;
+  const { tourId, timeslotId, name, email, phone } = req.body;
 
-  if (!sessionId || !name || !email) {
-    return res.status(400).json({ error: "Missing required fields (session, name, and email are mandatory)." });
+  if (!tourId || !timeslotId || !name || !email) {
+    return res.status(400).json({ error: "Missing required fields (tour, timeslot, name, and email are mandatory)." });
   }
 
   enqueueBookingTask(async () => {
-    const sessions = readSchedule();
-    const session = sessions.find(s => s.id === sessionId);
+    const tours = readSchedule();
+    const tour = tours.find(t => t.id === tourId);
 
-    if (!session) {
-      return { status: 404, data: { error: "Tour session not found." } };
+    if (!tour) {
+      return { status: 404, data: { error: "Tour route not found." } };
+    }
+
+    const slot = (tour.timeslots || []).find(s => s.id === timeslotId);
+    if (!slot) {
+      return { status: 404, data: { error: "Scheduled departure timeslot not found." } };
     }
 
     const bookings = readBookings();
-    const sessionBookings = bookings.filter(b => b.sessionId === sessionId);
-    const maxCapacity = session.maxSlots || 5;
+    const slotBookings = bookings.filter(b => b.timeslotId === timeslotId);
+    const maxCapacity = slot.maxSlots || 5;
 
-    if (sessionBookings.length >= maxCapacity) {
-      return { status: 409, data: { error: "This session is fully booked. Only 5 slots are available." } };
+    if (slotBookings.length >= maxCapacity) {
+      return { status: 409, data: { error: "This scheduled departure is fully booked. Capped at 5 passengers." } };
     }
 
-    // Check double-booking
-    const isDoubleBooked = sessionBookings.some(b => b.email.toLowerCase() === email.toLowerCase());
+    // Check double-booking on this specific timeslot
+    const isDoubleBooked = slotBookings.some(b => b.email.toLowerCase() === email.toLowerCase());
     if (isDoubleBooked) {
-      return { status: 400, data: { error: "You are already booked for this tour session." } };
+      return { status: 400, data: { error: "You are already booked for this specific timeslot departure." } };
     }
 
-    // Create the booking entry
+    // Create the booking entry referencing BOTH tour and timeslot
     const newBooking = {
       id: uuidv4(),
-      sessionId,
+      tourId,
+      timeslotId,
       name: name.trim(),
       email: email.trim(),
       phone: (phone || '').trim(),
@@ -306,7 +338,7 @@ app.post('/api/book', (req, res) => {
       return { status: 500, data: { error: "Internal Database Write Failure. Please try again." } };
     }
 
-    sendBookingConfirmationEmail(newBooking, session).catch(console.error);
+    sendBookingConfirmationEmail(newBooking, tour, slot).catch(console.error);
 
     return { status: 201, data: newBooking };
   })
@@ -321,33 +353,54 @@ app.post('/api/book', (req, res) => {
 
 // --- Admin API Endpoints ---
 
-// Get all bookings + statistics
-app.get('/api/admin/bookings', (req, res) => {
-  const bookings = readBookings();
-  const sessions = readSchedule();
+// Login Endpoint to verify passcode
+app.post('/api/admin/login', (req, res) => {
+  const { password } = req.body;
+  
+  if (password === ADMIN_PASSWORD) {
+    res.json({ success: true, token: ADMIN_PASSWORD });
+  } else {
+    res.status(401).json({ error: "Invalid operator passcode." });
+  }
+});
 
+// Get all bookings + statistics (Protected)
+app.get('/api/admin/bookings', checkAdminAuth, (req, res) => {
+  const bookings = readBookings();
+  const tours = readSchedule();
+
+  // Attach route and timeslot details to bookings for manifest ledger
   const enrichedBookings = bookings.map(b => {
-    const session = sessions.find(s => s.id === b.sessionId);
+    const tour = tours.find(t => t.id === b.tourId);
+    const slot = tour ? (tour.timeslots || []).find(s => s.id === b.timeslotId) : null;
     return {
       ...b,
-      sessionTitle: session ? session.title : 'Unknown Tour',
-      sessionDate: session ? session.date : '',
-      sessionTime: session ? session.time : ''
+      sessionTitle: tour ? tour.title : 'Unknown Tour',
+      sessionDate: slot ? slot.date : '',
+      sessionTime: slot ? slot.time : ''
     };
+  });
+
+  // Calculate stats based on timeslots capacity
+  let totalSlotsCapacity = 0;
+  tours.forEach(tour => {
+    (tour.timeslots || []).forEach(slot => {
+      totalSlotsCapacity += (slot.maxSlots || 5);
+    });
   });
 
   const stats = {
     totalBookings: bookings.length,
-    activeTours: sessions.length,
+    activeTours: tours.length,
     checkedInCount: bookings.filter(b => b.checkedIn).length,
-    totalSlotsAvailable: sessions.reduce((acc, s) => acc + (s.maxSlots || 5), 0)
+    totalSlotsAvailable: totalSlotsCapacity
   };
 
   res.json({ bookings: enrichedBookings, stats });
 });
 
-// Toggle check-in status
-app.post('/api/admin/checkin', (req, res) => {
+// Toggle check-in status (Protected)
+app.post('/api/admin/checkin', checkAdminAuth, (req, res) => {
   const { bookingId, checkedIn } = req.body;
 
   if (!bookingId) {
@@ -371,8 +424,8 @@ app.post('/api/admin/checkin', (req, res) => {
   res.json({ success: true, booking: bookings[bookingIndex] });
 });
 
-// Cancel a booking
-app.post('/api/admin/cancel', (req, res) => {
+// Cancel a booking (Protected)
+app.post('/api/admin/cancel', checkAdminAuth, (req, res) => {
   const { bookingId } = req.body;
 
   if (!bookingId) {
@@ -396,20 +449,28 @@ app.post('/api/admin/cancel', (req, res) => {
   res.json({ success: true, message: "Booking cancelled successfully." });
 });
 
-// Save/Update the schedule configuration (Fully updates schedule.json)
-app.post('/api/admin/schedule', (req, res) => {
+// Save/Update the schedule configuration (Protected - Fully updates schedule.json)
+app.post('/api/admin/schedule', checkAdminAuth, (req, res) => {
   const newSchedule = req.body;
 
   if (!Array.isArray(newSchedule)) {
-    return res.status(400).json({ error: "Invalid schedule format. Expected an array of tour sessions." });
+    return res.status(400).json({ error: "Invalid schedule format. Expected an array of tours." });
   }
 
-  // Validate schedule objects
-  for (const session of newSchedule) {
-    if (!session.id || !session.title || !session.date || !session.time) {
-      return res.status(400).json({ error: "All sessions must contain a unique ID, Title, Date, and Departure Time." });
+  // Validate tour objects
+  for (const tour of newSchedule) {
+    if (!tour.id || !tour.title || !tour.description) {
+      return res.status(400).json({ error: "All tours must contain a unique ID, Title, and Description." });
     }
-    session.maxSlots = parseInt(session.maxSlots) || 5;
+    
+    // Validate nested timeslots
+    tour.timeslots = tour.timeslots || [];
+    for (const slot of tour.timeslots) {
+      if (!slot.id || !slot.date || !slot.time) {
+        return res.status(400).json({ error: "All timeslots must contain a unique ID, Date, and Time." });
+      }
+      slot.maxSlots = parseInt(slot.maxSlots) || 5;
+    }
   }
 
   const success = writeSchedule(newSchedule);
@@ -417,9 +478,16 @@ app.post('/api/admin/schedule', (req, res) => {
     return res.status(500).json({ error: "Failed to write schedule configuration to file." });
   }
 
+  // Clean bookings that belong to deleted timeslots
   const bookings = readBookings();
-  const activeSessionIds = newSchedule.map(s => s.id);
-  const filteredBookings = bookings.filter(b => activeSessionIds.includes(b.sessionId));
+  const activeTimeslotIds = [];
+  newSchedule.forEach(tour => {
+    (tour.timeslots || []).forEach(slot => {
+      activeTimeslotIds.push(slot.id);
+    });
+  });
+
+  const filteredBookings = bookings.filter(b => activeTimeslotIds.includes(b.timeslotId));
   if (filteredBookings.length !== bookings.length) {
     writeBookings(filteredBookings);
   }

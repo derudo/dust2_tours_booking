@@ -1,5 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Elements
+  // Auth Screen Elements
+  const adminLoginOverlay = document.getElementById('admin-login-overlay');
+  const loginCardContainer = document.getElementById('login-card-container');
+  const adminLoginForm = document.getElementById('admin-login-form');
+  const adminPasscodeInput = document.getElementById('admin-passcode-input');
+  const loginErrorMsg = document.getElementById('login-error-msg');
+  const adminSecuredContent = document.getElementById('admin-secured-content');
+  const adminLogoutBtn = document.getElementById('admin-logout-btn');
+
+  // Core Dashboard Elements
   const bookingsTableBody = document.getElementById('bookings-table-body');
   const manifestRouteFilter = document.getElementById('manifest-route-filter');
   const manifestSearchInput = document.getElementById('manifest-search-input');
@@ -17,11 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const configStatusHelp = document.getElementById('config-status-help');
   const openAddSessionBtn = document.getElementById('open-add-session-btn');
   
-  // Add Modal Wizard
+  // Add Route Modal Wizard
   const addSessionModal = document.getElementById('add-session-modal');
   const closeAddModalBtn = document.getElementById('close-add-modal-btn');
   const cancelAddBtn = document.getElementById('cancel-add-btn');
   const addSessionForm = document.getElementById('add-session-form');
+
+  // Add Timeslot Modal Wizard (NEW!)
+  const addTimeslotModal = document.getElementById('add-timeslot-modal');
+  const closeTimeslotModalBtn = document.getElementById('close-timeslot-modal-btn');
+  const cancelTimeslotBtn = document.getElementById('cancel-timeslot-btn');
+  const addTimeslotForm = document.getElementById('add-timeslot-form');
+  const timeslotTargetTourTitle = document.getElementById('timeslot-target-tour-title');
+  const timeslotTargetTourId = document.getElementById('timeslot-target-tour-id');
 
   // Toast banner
   const toastNotification = document.getElementById('toast-notification');
@@ -32,10 +49,90 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeFilters = { search: '', route: 'all' };
   let isConfigDirty = false;
 
+  // --- Auth Gating Check ---
+  function getAuthToken() {
+    return sessionStorage.getItem('admin_token');
+  }
+
+  function getHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + getAuthToken()
+    };
+  }
+
+  function handleUnauthorized() {
+    sessionStorage.removeItem('admin_token');
+    adminSecuredContent.style.display = 'none';
+    adminLoginOverlay.classList.add('active');
+    adminLoginForm.reset();
+    showToast("⚠️ Security session expired. Passcode required.", true);
+  }
+
+  // Login execution
+  adminLoginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const password = adminPasscodeInput.value;
+
+    try {
+      loginErrorMsg.textContent = '';
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Authentication failed");
+      }
+
+      // Success!
+      sessionStorage.setItem('admin_token', result.token);
+      adminLoginOverlay.classList.remove('active');
+      adminSecuredContent.style.display = 'block';
+      fetchAdminData();
+      showToast("Access granted. Terminal synchronized.");
+
+    } catch (error) {
+      console.error(error);
+      loginErrorMsg.textContent = error.message;
+      
+      // Trigger card shake animation
+      loginCardContainer.classList.add('shake');
+      setTimeout(() => {
+        loginCardContainer.classList.remove('shake');
+      }, 500);
+    }
+  });
+
+  // Logout execution
+  adminLogoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('admin_token');
+    location.reload();
+  });
+
+  // Check initial token presence on load
+  if (getAuthToken()) {
+    adminLoginOverlay.classList.remove('active');
+    adminSecuredContent.style.display = 'block';
+    fetchAdminData();
+  }
+
   // --- Fetch System Records ---
   async function fetchAdminData() {
+    const token = getAuthToken();
+    if (!token) return;
+
     try {
-      const bookingsResponse = await fetch('/api/admin/bookings');
+      const bookingsResponse = await fetch('/api/admin/bookings', { headers: getHeaders() });
+      
+      if (bookingsResponse.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+
       const scheduleResponse = await fetch('/api/schedule');
 
       if (!bookingsResponse.ok || !scheduleResponse.ok) {
@@ -88,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Render Passenger Manifest ---
   function renderManifest() {
     const filtered = bookingsData.filter(booking => {
-      if (activeFilters.route !== 'all' && booking.sessionId !== activeFilters.route) {
+      if (activeFilters.route !== 'all' && booking.tourId !== activeFilters.route) {
         return false;
       }
       
@@ -159,12 +256,10 @@ document.addEventListener('DOMContentLoaded', () => {
       bookingsTableBody.appendChild(tr);
     });
 
-    // Attach row triggers using change event
     bookingsTableBody.querySelectorAll('.checkin-toggle-input').forEach(input => {
       input.addEventListener('change', handleCheckinToggle);
     });
 
-    // Attach Cancel triggers using click event
     bookingsTableBody.querySelectorAll('.cancel-booking-btn').forEach(btn => {
       btn.addEventListener('click', handleCancelBooking);
     });
@@ -175,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookingId = e.target.getAttribute('data-id');
     const checkedIn = e.target.checked;
     
-    // Optimistic UI updates
     const textSpan = e.target.parentElement.nextElementSibling;
     textSpan.textContent = checkedIn ? 'Checked-In' : 'Pending';
     textSpan.className = `toggle-status-text ${checkedIn ? 'checked' : 'pending'}`;
@@ -183,9 +277,14 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('/api/admin/checkin', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify({ bookingId, checkedIn })
       });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("API Check-in update failed");
@@ -197,13 +296,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error(error);
       showToast("⚠️ Connection error: Failed to record check-in", true);
-      e.target.checked = !checkedIn; // rollback
+      e.target.checked = !checkedIn;
       textSpan.textContent = !checkedIn ? 'Checked-In' : 'Pending';
       textSpan.className = `toggle-status-text ${!checkedIn ? 'checked' : 'pending'}`;
     }
   }
 
-  // Handle Cancel passenger Booking (safely wrapped in .closest())
+  // Handle Cancel passenger Booking
   async function handleCancelBooking(e) {
     const btn = e.target.closest('.cancel-booking-btn');
     if (!btn) return;
@@ -218,9 +317,14 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('/api/admin/cancel', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify({ bookingId })
       });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Cancellation request rejected");
@@ -241,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
       editorToursList.innerHTML = `
         <div class="loading-spinner-wrapper">
           <div style="font-size: 24px;">📭</div>
-          <p>Schedule is empty. Add a departure session to start.</p>
+          <p>Schedule is empty. Add a tour route to start.</p>
         </div>
       `;
       return;
@@ -253,17 +357,66 @@ document.addEventListener('DOMContentLoaded', () => {
       const div = document.createElement('div');
       div.className = `editor-tour-item ${isConfigDirty ? 'changed' : ''}`;
       
-      div.innerHTML = `
-        <h4 class="editor-tour-title">${tour.title}</h4>
-        <div class="editor-tour-meta">
-          📅 ${formatDate(tour.date)} • ⏰ ${tour.time} • 🎫 Complimentary
-        </div>
-        <p class="editor-tour-desc">${tour.description}</p>
+      // Render nested timeslots list
+      let timeslotsListHtml = '';
+      if (!tour.timeslots || tour.timeslots.length === 0) {
+        timeslotsListHtml = `<p class="italic text-muted" style="font-size: 11px; margin: 10px 0;">No active timeslot departures scheduled.</p>`;
+      } else {
+        timeslotsListHtml = `
+          <table class="nested-slots-table" style="width: 100%; font-size: 12px; margin: 10px 0; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--primary-green); text-align: left;">
+                <th style="padding: 4px 0;">Date</th>
+                <th style="padding: 4px 0;">Time</th>
+                <th style="padding: 4px 0;">Cap</th>
+                <th style="padding: 4px 0; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
         
-        <div class="editor-tour-actions">
-          <span class="capacity-badge-pill">${tour.maxSlots || 5} Pax Maximum Capacity</span>
+        tour.timeslots.forEach(slot => {
+          timeslotsListHtml += `
+            <tr style="border-bottom: 1px solid rgba(26,51,34,0.06);">
+              <td style="padding: 6px 0;">📅 ${formatDate(slot.date)}</td>
+              <td style="padding: 6px 0;">⏰ ${slot.time}</td>
+              <td style="padding: 6px 0;">👤 ${slot.maxSlots || 5} Pax</td>
+              <td style="padding: 6px 0; text-align: right;">
+                <button type="button" class="btn btn-danger btn-sm delete-timeslot-btn" 
+                  data-tour-id="${tour.id}" 
+                  data-slot-id="${slot.id}" 
+                  style="padding: 2px 6px; font-size: 9px; border-width: 1px;">
+                  &times; Delete
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+        
+        timeslotsListHtml += `</tbody></table>`;
+      }
+
+      div.innerHTML = `
+        <h4 class="editor-tour-title" style="margin-bottom: 2px;">${tour.title}</h4>
+        <p class="editor-tour-desc" style="margin-bottom: 8px;">${tour.description}</p>
+        
+        <div style="background-color: var(--accent-pink-light); padding: 12px; border-radius: 4px; border: var(--border-thin);">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--primary-green); padding-bottom: 6px;">
+            <strong style="font-size: 11px; text-transform: uppercase; color: var(--primary-green);">Scheduled Departures:</strong>
+            <button type="button" class="btn btn-primary btn-sm open-add-timeslot-btn" 
+              data-tour-id="${tour.id}" 
+              data-tour-title="${tour.title}"
+              style="padding: 2px 8px; font-size: 9px; border-width: 1px;">
+              + Add Slot
+            </button>
+          </div>
+          ${timeslotsListHtml}
+        </div>
+        
+        <div class="editor-tour-actions" style="margin-top: 14px;">
+          <span></span>
           <button class="btn btn-danger btn-sm btn-icon delete-session-btn" data-id="${tour.id}">
-            &times; Remove Tour
+            &times; Delete Route
           </button>
         </div>
       `;
@@ -271,30 +424,130 @@ document.addEventListener('DOMContentLoaded', () => {
       editorToursList.appendChild(div);
     });
 
-    // Add remove actions
+    // Attach route delete triggers
     editorToursList.querySelectorAll('.delete-session-btn').forEach(btn => {
       btn.addEventListener('click', handleDeleteSession);
     });
+
+    // Attach open timeslot modal triggers
+    editorToursList.querySelectorAll('.open-add-timeslot-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetBtn = e.target.closest('.open-add-timeslot-btn');
+        const tourId = targetBtn.getAttribute('data-tour-id');
+        const tourTitle = targetBtn.getAttribute('data-tour-title');
+        
+        openAddTimeslotDialog(tourId, tourTitle);
+      });
+    });
+
+    // Attach timeslot delete triggers
+    editorToursList.querySelectorAll('.delete-timeslot-btn').forEach(btn => {
+      btn.addEventListener('click', handleDeleteTimeslot);
+    });
   }
 
-  // Delete session from memory list (safely wrapped in .closest())
-  function handleDeleteSession(e) {
-    const btn = e.target.closest('.delete-session-btn');
+  // Open add timeslot wizard
+  function openAddTimeslotDialog(tourId, tourTitle) {
+    timeslotTargetTourId.value = tourId;
+    timeslotTargetTourTitle.textContent = tourTitle;
+    
+    addTimeslotForm.reset();
+    
+    const nextWeek = new Date();
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    document.getElementById('new-slot-date').value = nextWeek.toISOString().substring(0, 10);
+    
+    addTimeslotModal.classList.add('active');
+    addTimeslotModal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeAddTimeslotDialog() {
+    addTimeslotModal.classList.remove('active');
+    addTimeslotModal.setAttribute('aria-hidden', 'true');
+  }
+
+  closeTimeslotModalBtn.addEventListener('click', closeAddTimeslotDialog);
+  cancelTimeslotBtn.addEventListener('click', closeAddTimeslotDialog);
+
+  // Submit add timeslot
+  addTimeslotForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const tourId = timeslotTargetTourId.value;
+    const date = document.getElementById('new-slot-date').value;
+    const time = document.getElementById('new-slot-time').value;
+    const maxSlots = parseInt(document.getElementById('new-slot-capacity').value) || 5;
+
+    const tour = scheduleData.find(t => t.id === tourId);
+    if (!tour) return;
+
+    tour.timeslots = tour.timeslots || [];
+    
+    // Create slot object
+    const newSlot = {
+      id: 'slot-' + Date.now(),
+      date,
+      time,
+      maxSlots
+    };
+
+    tour.timeslots.push(newSlot);
+    
+    setConfigDirtyState(true);
+    closeAddTimeslotDialog();
+    renderConfigEditor();
+    
+    showToast(`Added timeslot departure: ${date} at ${time}`);
+  });
+
+  // Delete timeslot from memory
+  function handleDeleteTimeslot(e) {
+    const btn = e.target.closest('.delete-timeslot-btn');
     if (!btn) return;
 
-    const sessionId = btn.getAttribute('data-id');
-    const targetSession = scheduleData.find(s => s.id === sessionId);
-    if (!targetSession) return;
+    const tourId = btn.getAttribute('data-tour-id');
+    const slotId = btn.getAttribute('data-slot-id');
+    
+    const tour = scheduleData.find(t => t.id === tourId);
+    if (!tour) return;
 
-    const bookingsCount = bookingsData.filter(b => b.sessionId === sessionId).length;
-    let message = `Are you sure you want to delete the excursion departure "${targetSession.title}"?`;
+    const slot = (tour.timeslots || []).find(s => s.id === slotId);
+    if (!slot) return;
+
+    // Check if bookings exist for this slot
+    const bookingsCount = bookingsData.filter(b => b.timeslotId === slotId).length;
+    let message = `Are you sure you want to delete the timeslot departure "${slot.date} at ${slot.time}"?`;
     if (bookingsCount > 0) {
-      message += `\n\n⚠️ WARNING: There are active passenger manifests (${bookingsCount} bookings) for this tour! Deleting it will permanently clear these bookings as well.`;
+      message += `\n\n⚠️ WARNING: There are active passenger manifests (${bookingsCount} bookings) for this timeslot! Deleting it will permanently clear these bookings as well.`;
     }
 
     if (!confirm(message)) return;
 
-    scheduleData = scheduleData.filter(s => s.id !== sessionId);
+    tour.timeslots = tour.timeslots.filter(s => s.id !== slotId);
+    setConfigDirtyState(true);
+    renderConfigEditor();
+  }
+
+  // Delete route from memory list
+  function handleDeleteSession(e) {
+    const btn = e.target.closest('.delete-session-btn');
+    if (!btn) return;
+
+    const tourId = btn.getAttribute('data-id');
+    const targetTour = scheduleData.find(t => t.id === tourId);
+    if (!targetTour) return;
+
+    // Count bookings across all timeslots of this tour
+    const activeSlots = (targetTour.timeslots || []).map(s => s.id);
+    const bookingsCount = bookingsData.filter(b => activeSlots.includes(b.timeslotId)).length;
+    
+    let message = `Are you sure you want to delete the entire excursion route "${targetTour.title}"?`;
+    if (bookingsCount > 0) {
+      message += `\n\n⚠️ WARNING: There are active passenger manifests (${bookingsCount} bookings) across the scheduled timeslots of this route! Deleting the route will permanently clear these bookings as well.`;
+    }
+
+    if (!confirm(message)) return;
+
+    scheduleData = scheduleData.filter(t => t.id !== tourId);
     setConfigDirtyState(true);
     renderConfigEditor();
   }
@@ -321,9 +574,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const response = await fetch('/api/admin/schedule', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getHeaders(),
         body: JSON.stringify(scheduleData)
       });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Failed to write schedule file");
@@ -342,14 +600,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- Add Session Modal Form ---
+  // --- Add Route Modal Form ---
   openAddSessionBtn.addEventListener('click', () => {
     addSessionForm.reset();
-    
-    const nextWeek = new Date();
-    nextWeek.setDate(nextWeek.getDate() + 7);
-    document.getElementById('new-session-date').value = nextWeek.toISOString().substring(0,10);
-    
     addSessionModal.classList.add('active');
     addSessionModal.setAttribute('aria-hidden', 'false');
   });
@@ -366,32 +619,28 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     
     const title = document.getElementById('new-session-title').value.trim();
-    const date = document.getElementById('new-session-date').value;
-    const time = document.getElementById('new-session-time').value;
-    const capacity = parseInt(document.getElementById('new-session-capacity').value) || 5;
     const description = document.getElementById('new-session-desc').value.trim();
 
-    const newSession = {
-      id: 'session-' + Date.now(),
+    const newTour = {
+      id: 'tour-' + Date.now(),
       title,
-      date,
-      time,
-      maxSlots: capacity,
-      description
+      description,
+      image: "",
+      timeslots: []
     };
 
-    scheduleData.push(newSession);
+    scheduleData.push(newTour);
     setConfigDirtyState(true);
     closeAddModal();
     renderConfigEditor();
     
-    showToast(`Added departure route: "${title}"`);
+    showToast(`Added tour route: "${title}"`);
   });
 
   // --- Export CSV Manifests Download ---
   exportCsvBtn.addEventListener('click', () => {
     const filtered = bookingsData.filter(booking => {
-      if (activeFilters.route !== 'all' && booking.sessionId !== activeFilters.route) return false;
+      if (activeFilters.route !== 'all' && booking.tourId !== activeFilters.route) return false;
       if (activeFilters.search) {
         const query = activeFilters.search.toLowerCase();
         const nameMatch = booking.name.toLowerCase().includes(query);
@@ -481,7 +730,4 @@ document.addEventListener('DOMContentLoaded', () => {
       return dateStr;
     }
   }
-
-  // --- Initial Launch ---
-  fetchAdminData();
 });

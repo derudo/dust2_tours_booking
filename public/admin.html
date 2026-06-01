@@ -16,140 +16,171 @@
 </head>
 <body class="admin-body">
 
-  <!-- Navigation Header -->
-  <header class="main-header admin-header">
-    <div class="header-container">
-      <div class="brand-logo-area">
-        <div class="logo-wrapper">
-          <img src="images/logo.svg" id="main-logo-svg" alt="Dust2 Tours Badge Logo">
-        </div>
-        <div class="brand-titles">
-          <h1 class="agency-title">OPERATOR SYSTEM</h1>
-          <span class="agency-tagline">Dust2 Tours Manifest &amp; Scheduling</span>
-        </div>
+  <!-- ADMIN PASSCODE OVERLAY GATE (Operator Login Screen) -->
+  <div class="login-overlay active" id="admin-login-overlay" role="dialog" aria-modal="true">
+    <div class="login-card" id="login-card-container">
+      <div class="login-logo-area">
+        <img src="images/logo.svg" class="login-logo" alt="Dust2 badge logo">
+        <h2>OPERATOR SECURITY GATE</h2>
+        <p>Please enter the agency passcode to access passengers ledger manifest files and schedule editor databases.</p>
       </div>
-      <nav class="nav-links">
-        <a href="index.html" class="nav-item return-btn">Passenger Frontdesk</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Notification Banner -->
-  <div id="toast-notification" class="toast-banner" aria-live="polite">Notification message</div>
-
-  <!-- Main Container -->
-  <main class="admin-main-container">
-    
-    <!-- Statistics Section -->
-    <section class="stats-grid">
-      <div class="stat-card">
-        <span class="stat-label">TOTAL PASSENGERS</span>
-        <span class="stat-value" id="stat-total-bookings">0</span>
-        <span class="stat-subtext">Active bookings registered</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">ACTIVE EXCURSIONS</span>
-        <span class="stat-value" id="stat-active-tours">0</span>
-        <span class="stat-subtext">Scheduled departure slots</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">CHECKED IN</span>
-        <span class="stat-value" id="stat-checked-in">0</span>
-        <span class="stat-subtext">Passengers boarding spawn</span>
-      </div>
-      <div class="stat-card highlight">
-        <span class="stat-label">TOTAL SPACE UTILIZED</span>
-        <span class="stat-value" id="stat-capacity-ratio">0%</span>
-        <span class="stat-subtext">Booked slots vs total capacity</span>
-      </div>
-    </section>
-
-    <!-- Content Workspace -->
-    <div class="admin-workspace-grid">
       
-      <!-- LEFT SECTION: Passenger Manifests -->
-      <section class="manifest-section admin-panel-card">
-        <div class="panel-card-header">
-          <div class="header-title-group">
-            <h2 class="panel-title">Passenger Manifest Ledger</h2>
-            <p class="panel-subtitle">Filter, check-in, or manage registered passengers</p>
+      <div class="vintage-divider mini">
+        <span class="divider-diamond"></span>
+      </div>
+
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label for="admin-passcode-input" class="form-label">Operator Passcode</label>
+          <input type="password" id="admin-passcode-input" class="form-input text-center" placeholder="••••••••" required autofocus>
+          <span class="form-help text-center" style="display: block; margin-top: 6px;">Secure, server-side validated token exchange.</span>
+        </div>
+        
+        <div id="login-error-msg" class="login-error-text"></div>
+
+        <button type="submit" class="btn btn-primary w-full" id="login-submit-btn">Unlock Manifest Records</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATED SYSTEM CONTENT (Initially hidden via CSS/JS) -->
+  <div id="admin-secured-content" style="display: none;">
+    <!-- Navigation Header -->
+    <header class="main-header admin-header">
+      <div class="header-container">
+        <div class="brand-logo-area">
+          <div class="logo-wrapper">
+            <img src="images/logo.svg" id="main-logo-svg" alt="Dust2 Tours Badge Logo">
           </div>
-          <div class="header-actions-group">
-            <button class="btn btn-secondary btn-icon" id="export-csv-btn">
-              <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
-              Export CSV
+          <div class="brand-titles">
+            <h1 class="agency-title">OPERATOR SYSTEM</h1>
+            <span class="agency-tagline">Dust2 Tours Manifest &amp; Scheduling</span>
+          </div>
+        </div>
+        <nav class="nav-links">
+          <button class="nav-item admin-portal-btn return-btn" id="admin-logout-btn" style="background: transparent; border: 2px solid var(--accent-pink); padding: 5px 12px; cursor: pointer;">Lock Terminal</button>
+          <a href="index.html" class="nav-item return-btn">Passenger Frontdesk</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Notification Banner -->
+    <div id="toast-notification" class="toast-banner" aria-live="polite">Notification message</div>
+
+    <!-- Main Container -->
+    <main class="admin-main-container">
+      
+      <!-- Statistics Section -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">TOTAL PASSENGERS</span>
+          <span class="stat-value" id="stat-total-bookings">0</span>
+          <span class="stat-subtext">Active bookings registered</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">ACTIVE EXCURSIONS</span>
+          <span class="stat-value" id="stat-active-tours">0</span>
+          <span class="stat-subtext">Scheduled departure slots</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">CHECKED IN</span>
+          <span class="stat-value" id="stat-checked-in">0</span>
+          <span class="stat-subtext">Passengers boarding spawn</span>
+        </div>
+        <div class="stat-card highlight">
+          <span class="stat-label">TOTAL SPACE UTILIZED</span>
+          <span class="stat-value" id="stat-capacity-ratio">0%</span>
+          <span class="stat-subtext">Booked slots vs total capacity</span>
+        </div>
+      </section>
+
+      <!-- Content Workspace -->
+      <div class="admin-workspace-grid">
+        
+        <!-- LEFT SECTION: Passenger Manifests -->
+        <section class="manifest-section admin-panel-card">
+          <div class="panel-card-header">
+            <div class="header-title-group">
+              <h2 class="panel-title">Passenger Manifest Ledger</h2>
+              <p class="panel-subtitle">Filter, check-in, or manage registered passengers</p>
+            </div>
+            <div class="header-actions-group">
+              <button class="btn btn-secondary btn-icon" id="export-csv-btn">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+                Export CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Filters Bar -->
+          <div class="manifest-filters">
+            <div class="search-input-wrapper">
+              <input type="text" id="manifest-search-input" class="form-input search-input" placeholder="Search by name, email, or reference code...">
+            </div>
+            <div class="select-filter-wrapper">
+              <select id="manifest-route-filter" class="form-input filter-select">
+                <option value="all">All Excursions</option>
+                <!-- Dynamic Routes -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Manifest Data Table -->
+          <div class="table-container">
+            <table class="ledger-table" id="bookings-ledger">
+              <thead>
+                <tr>
+                  <th scope="col">Ref Code</th>
+                  <th scope="col">Passenger Details</th>
+                  <th scope="col">Route &amp; Departure</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="bookings-table-body">
+                <!-- Dynamic bookings -->
+                <tr>
+                  <td colspan="5" class="text-center italic text-muted py-8">
+                    Loading passenger rosters...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- RIGHT SECTION: Schedule & Config visual manager -->
+        <section class="schedule-config-section admin-panel-card">
+          <div class="panel-card-header">
+            <div class="header-title-group">
+              <h2 class="panel-title">Excursion Configuration</h2>
+              <p class="panel-subtitle">Edit the schedule.json file visually</p>
+            </div>
+            <button class="btn btn-primary btn-sm btn-icon" id="open-add-session-btn">
+              <span class="icon-plus">+</span> Add Tour Route
             </button>
           </div>
-        </div>
 
-        <!-- Filters Bar -->
-        <div class="manifest-filters">
-          <div class="search-input-wrapper">
-            <input type="text" id="manifest-search-input" class="form-input search-input" placeholder="Search by name, email, or reference code...">
+          <!-- Visual Tour Editor Cards -->
+          <div class="editor-tours-list" id="editor-tours-list">
+            <!-- Dynamic scheduled departures -->
+            <div class="loading-spinner-wrapper">
+              <div class="classic-spinner"></div>
+              <p>Loading scheduled departures...</p>
+            </div>
           </div>
-          <div class="select-filter-wrapper">
-            <select id="manifest-route-filter" class="form-input filter-select">
-              <option value="all">All Excursions</option>
-              <!-- Dynamic Routes -->
-            </select>
+
+          <div class="config-action-bar">
+            <button class="btn btn-primary w-full" id="save-schedule-config-btn" disabled>
+              Write Changes to schedule.json
+            </button>
+            <span class="config-status-help text-center" id="config-status-help">Schedule configuration is synchronized</span>
           </div>
-        </div>
+        </section>
 
-        <!-- Manifest Data Table -->
-        <div class="table-container">
-          <table class="ledger-table" id="bookings-ledger">
-            <thead>
-              <tr>
-                <th scope="col">Ref Code</th>
-                <th scope="col">Passenger Details</th>
-                <th scope="col">Route &amp; Departure</th>
-                <th scope="col">Status</th>
-                <th scope="col" class="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="bookings-table-body">
-              <!-- Dynamic bookings -->
-              <tr>
-                <td colspan="5" class="text-center italic text-muted py-8">
-                  Loading passenger rosters...
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- RIGHT SECTION: Schedule & Config visual manager -->
-      <section class="schedule-config-section admin-panel-card">
-        <div class="panel-card-header">
-          <div class="header-title-group">
-            <h2 class="panel-title">Excursion Configuration</h2>
-            <p class="panel-subtitle">Edit the schedule.json file visually</p>
-          </div>
-          <button class="btn btn-primary btn-sm btn-icon" id="open-add-session-btn">
-            <span class="icon-plus">+</span> Add Departure
-          </button>
-        </div>
-
-        <!-- Visual Tour Editor Cards -->
-        <div class="editor-tours-list" id="editor-tours-list">
-          <!-- Dynamic scheduled departures -->
-          <div class="loading-spinner-wrapper">
-            <div class="classic-spinner"></div>
-            <p>Loading scheduled departures...</p>
-          </div>
-        </div>
-
-        <div class="config-action-bar">
-          <button class="btn btn-primary w-full" id="save-schedule-config-btn" disabled>
-            Write Changes to schedule.json
-          </button>
-          <span class="config-status-help text-center" id="config-status-help">Schedule configuration is synchronized</span>
-        </div>
-      </section>
-
-    </div>
-  </main>
+      </div>
+    </main>
+  </div>
 
   <!-- Add Excursion Dialog Modal -->
   <div class="modal-overlay" id="add-session-modal" aria-hidden="true" role="dialog">
@@ -158,7 +189,7 @@
       
       <div class="modal-header">
         <span class="modal-subtitle">SCHEDULING WIZARD</span>
-        <h4 class="modal-title">Create Tour Departure</h4>
+        <h4 class="modal-title">Create Tour Route</h4>
         <p class="modal-tour-meta">Adds a new entry into your active schedule.json configuration file.</p>
       </div>
       
@@ -172,32 +203,58 @@
           <input type="text" id="new-session-title" class="form-input" placeholder="e.g. B-Site Subterranean Hike" required>
         </div>
         
-        <div class="form-row-split">
-          <div class="form-group">
-            <label for="new-session-date" class="form-label">Departure Date</label>
-            <input type="date" id="new-session-date" class="form-input" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="new-session-time" class="form-label">Departure Time</label>
-            <input type="time" id="new-session-time" class="form-input" required>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="new-session-capacity" class="form-label">Capacity Slots Limit</label>
-          <input type="number" id="new-session-capacity" class="form-input" value="5" min="1" max="100" required>
-          <span class="form-help">Default is 5 slots. Excursions are strictly complimentary.</span>
-        </div>
-        
         <div class="form-group">
           <label for="new-session-desc" class="form-label">Excursion Description</label>
-          <textarea id="new-session-desc" class="form-input text-area" rows="3" placeholder="Describe the tour route highlights and passenger requirements..." required></textarea>
+          <textarea id="new-session-desc" class="form-input text-area" rows="4" placeholder="Describe the tour route highlights and passenger requirements..." required></textarea>
         </div>
 
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" id="cancel-add-btn">Cancel</button>
-          <button type="submit" class="btn btn-primary">Add Session to List</button>
+          <button type="submit" class="btn btn-primary">Add Route to list</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Timeslot Dialog Modal (NEW!) -->
+  <div class="modal-overlay" id="add-timeslot-modal" aria-hidden="true" role="dialog">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="close-timeslot-modal-btn" aria-label="Close dialog">&times;</button>
+      
+      <div class="modal-header">
+        <span class="modal-subtitle">DEPARTURE MAKER</span>
+        <h4 class="modal-title">Schedule Departure Time</h4>
+        <p class="modal-tour-meta">Adds a specific timeslot session under <strong id="timeslot-target-tour-title">Tour</strong>.</p>
+      </div>
+      
+      <div class="vintage-divider mini">
+        <span class="divider-diamond"></span>
+      </div>
+      
+      <form class="booking-form" id="add-timeslot-form">
+        <input type="hidden" id="timeslot-target-tour-id">
+        
+        <div class="form-row-split">
+          <div class="form-group">
+            <label for="new-slot-date" class="form-label">Departure Date</label>
+            <input type="date" id="new-slot-date" class="form-input" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="new-slot-time" class="form-label">Departure Time</label>
+            <input type="time" id="new-slot-time" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="new-slot-capacity" class="form-label">Timeslot Slot Limit</label>
+          <input type="number" id="new-slot-capacity" class="form-input" value="5" min="1" max="100" required>
+          <span class="form-help">Strictly capped at 5 slots by default to ensure preservation.</span>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-timeslot-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Departure Slot</button>
         </div>
       </form>
     </div>
