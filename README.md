@@ -7,9 +7,9 @@ A robust, simple, and beautifully styled booking tool for **Dust2 Tours**. Craft
 ## 🎨 Design Theme & Brand Identity
 - **Visual Vibe**: Traditional Print Travel Brochure. No sci-fi glassmorphism or gaming neon. Warm retro stamp accents and boarding ticket stub motifs.
 - **Palette**:
-  - **Background**: Traditional Warm Cream/Ivory (`#FAF7F0`)
-  - **Primary Brand Color**: Deep Forest Green (`#1A3322`)
-  - **Accent Elements & Highlights**: Dusty Pink (`#DDA5A5`) and Muted Rose (`#C68B8B`)
+  - **Background**: Soft Rosa (`#F4E4F1`) and Warm Ivory Cream (`#FAF6F4`)
+  - **Primary Brand Color**: Forest Green (`#00A95C`)
+  - **Accent Elements & Highlights**: Medium Pink (`#DFB3D7`) and Muted Rose (`#C686BB`)
 - **Typography**: 
   - **Anton** (high-impact retro title headings)
   - **DM Sans** (highly legible, elegant body sans-serif)
@@ -98,3 +98,13 @@ npm run dev
   - `images/`: Brand assets.
     - [`logo.svg`](file:///u:/master/studio%202/dust2.tours%20booking/public/images/logo.svg): Placeholder curved agency compass logo badge (ready for swap-out!).
 - [`sent_emails.log`](file:///u:/master/studio%202/dust2.tours%20booking/sent_emails.log): Generated log registering confirmation emails dispatched.
+
+---
+
+## ☁️ Deployment on Render
+
+This system is fully optimized for cloud deployment platforms like **Render**:
+1. **Persistent Disk Mount**: Under the "Disks" section of your Web Service in Render, mount a persistent disk at a specific path (e.g., `/var/data` or `/data`).
+2. **Environment Variables**: Add an environment variable named `DATA_DIR` and set it to your disk mount path (e.g., `DATA_DIR=/var/data`).
+3. **Automatic Copying**: On first startup, if the database file `schedule.json` does not exist in your persistent path, the server will automatically copy the pre-seeded default tour configurations from the codebase repository so your app works instantly with all tour routes loaded!
+

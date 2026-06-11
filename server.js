@@ -560,10 +560,32 @@ app.post('/api/admin/scan-lookup', checkAdminAuth, (req, res) => {
 // --- Server Startup ---
 
 if (!fs.existsSync(SCHEDULE_FILE)) {
-  writeSchedule([]);
+  const defaultSchedulePath = path.join(__dirname, 'schedule.json');
+  if (fs.existsSync(defaultSchedulePath) && DATA_DIR !== __dirname) {
+    try {
+      fs.copyFileSync(defaultSchedulePath, SCHEDULE_FILE);
+      console.log(`[Database Init] Copied default schedule.json from repository to DATA_DIR: ${SCHEDULE_FILE}`);
+    } catch (err) {
+      console.error("Failed to copy default schedule.json to DATA_DIR:", err);
+      writeSchedule([]);
+    }
+  } else {
+    writeSchedule([]);
+  }
 }
 if (!fs.existsSync(BOOKINGS_FILE)) {
-  writeBookings([]);
+  const defaultBookingsPath = path.join(__dirname, 'bookings.json');
+  if (fs.existsSync(defaultBookingsPath) && DATA_DIR !== __dirname) {
+    try {
+      fs.copyFileSync(defaultBookingsPath, BOOKINGS_FILE);
+      console.log(`[Database Init] Copied default bookings.json from repository to DATA_DIR: ${BOOKINGS_FILE}`);
+    } catch (err) {
+      console.error("Failed to copy default bookings.json to DATA_DIR:", err);
+      writeBookings([]);
+    }
+  } else {
+    writeBookings([]);
+  }
 }
 
 app.listen(PORT, () => {
