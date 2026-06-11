@@ -17,6 +17,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve uploaded tours images from DATA_DIR/images/tours if available, fallback to public folder
+const CUSTOM_IMAGES_DIR = path.join(DATA_DIR, 'images', 'tours');
+if (!fs.existsSync(CUSTOM_IMAGES_DIR)) {
+  try {
+    fs.mkdirSync(CUSTOM_IMAGES_DIR, { recursive: true });
+  } catch (e) {}
+}
+app.use('/images/tours', express.static(CUSTOM_IMAGES_DIR));
+
 // Serve static frontend files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -361,6 +370,37 @@ app.post('/api/admin/login', (req, res) => {
     res.json({ success: true, token: ADMIN_PASSWORD });
   } else {
     res.status(401).json({ error: "Invalid operator passcode." });
+  }
+});
+
+// Admin endpoint to upload tour images (Protected)
+app.post('/api/admin/upload-image', checkAdminAuth, (req, res) => {
+  const { tourId, fileName, base64Data } = req.body;
+
+  if (!tourId || !fileName || !base64Data) {
+    return res.status(400).json({ error: "Missing required upload parameters." });
+  }
+
+  // Sanitize file name: remove path traversal characters
+  const sanitizedName = path.basename(fileName).replace(/[^a-zA-Z0-9.-]/g, '_');
+  const targetDir = path.join(DATA_DIR, 'images', 'tours');
+
+  try {
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    const buffer = Buffer.from(base64Data, 'base64');
+    const targetFilePath = path.join(targetDir, sanitizedName);
+    
+    fs.writeFileSync(targetFilePath, buffer);
+    console.log(`[Image Upload] Saved image to persistent drive: ${targetFilePath}`);
+
+    // Return the image URL served via express.static path /images/tours/
+    res.json({ imageUrl: `images/tours/${sanitizedName}` });
+  } catch (err) {
+    console.error("Failed to save uploaded image:", err);
+    res.status(500).json({ error: "Failed to save uploaded image file." });
   }
 });
 

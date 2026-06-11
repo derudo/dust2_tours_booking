@@ -400,6 +400,15 @@ document.addEventListener('DOMContentLoaded', () => {
         <h4 class="editor-tour-title" style="margin-bottom: 2px;">${tour.title}</h4>
         <p class="editor-tour-desc" style="margin-bottom: 8px;">${tour.description}</p>
         
+        <div class="editor-tour-image-container" style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+          <div style="width: 80px; height: 50px; border: var(--border-thin); background-color: var(--primary-green); overflow: hidden; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            ${tour.image ? `<img src="${tour.image}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 10px; color: var(--bg-cream);">No Image</span>`}
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <button type="button" class="btn btn-secondary btn-sm open-change-image-btn" data-tour-id="${tour.id}" data-tour-title="${tour.title}" style="padding: 4px 8px; font-size: 10px; border-width: 1px;">Change Tour Image</button>
+          </div>
+        </div>
+        
         <div style="background-color: var(--accent-pink-light); padding: 12px; border-radius: 4px; border: var(--border-thin);">
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--primary-green); padding-bottom: 6px;">
             <strong style="font-size: 11px; text-transform: uppercase; color: var(--primary-green);">Scheduled Departures:</strong>
@@ -443,6 +452,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Attach timeslot delete triggers
     editorToursList.querySelectorAll('.delete-timeslot-btn').forEach(btn => {
       btn.addEventListener('click', handleDeleteTimeslot);
+    });
+
+    // Attach open change image modal triggers
+    editorToursList.querySelectorAll('.open-change-image-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetBtn = e.target.closest('.open-change-image-btn');
+        const tourId = targetBtn.getAttribute('data-tour-id');
+        const tourTitle = targetBtn.getAttribute('data-tour-title');
+        
+        openChangeImageDialog(tourId, tourTitle);
+      });
     });
   }
 
@@ -620,12 +640,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const title = document.getElementById('new-session-title').value.trim();
     const description = document.getElementById('new-session-desc').value.trim();
+    const image = document.getElementById('new-session-image').value.trim();
 
     const newTour = {
       id: 'tour-' + Date.now(),
       title,
       description,
-      image: "",
+      image,
       timeslots: []
     };
 
@@ -929,5 +950,105 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if (scanAgainBtn) {
     scanAgainBtn.addEventListener('click', startScanner);
+  }
+
+  // --- Change Tour Image Modal ---
+  const changeImageModal = document.getElementById('change-image-modal');
+  const closeImageModalBtn = document.getElementById('close-image-modal-btn');
+  const cancelImageBtn = document.getElementById('cancel-image-btn');
+  const changeImageForm = document.getElementById('change-image-form');
+  const imageTargetTourId = document.getElementById('image-target-tour-id');
+  const imageTargetTourTitle = document.getElementById('image-target-tour-title');
+  const newImageFile = document.getElementById('new-image-file');
+  const newImageUrl = document.getElementById('new-image-url');
+
+  function openChangeImageDialog(tourId, tourTitle) {
+    imageTargetTourId.value = tourId;
+    imageTargetTourTitle.textContent = tourTitle;
+    changeImageForm.reset();
+    
+    // Pre-populate with existing URL if present
+    const tour = scheduleData.find(t => t.id === tourId);
+    if (tour && tour.image) {
+      newImageUrl.value = tour.image;
+    }
+
+    changeImageModal.classList.add('active');
+    changeImageModal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeChangeImageDialog() {
+    changeImageModal.classList.remove('active');
+    changeImageModal.setAttribute('aria-hidden', 'true');
+  }
+
+  if (closeImageModalBtn) {
+    closeImageModalBtn.addEventListener('click', closeChangeImageDialog);
+  }
+  if (cancelImageBtn) {
+    cancelImageBtn.addEventListener('click', closeChangeImageDialog);
+  }
+
+  if (changeImageForm) {
+    changeImageForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const tourId = imageTargetTourId.value;
+      const file = newImageFile.files[0];
+      const urlValue = newImageUrl.value.trim();
+
+      if (file) {
+        // Handle file upload
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+          const base64Data = event.target.result.split(',')[1];
+          try {
+            showToast("Uploading tour image file...");
+            const response = await fetch('/api/admin/upload-image', {
+              method: 'POST',
+              headers: getHeaders(),
+              body: JSON.stringify({
+                tourId,
+                fileName: file.name,
+                base64Data
+              })
+            });
+
+            if (response.status === 401) {
+              handleUnauthorized();
+              return;
+            }
+
+            if (!response.ok) {
+              throw new Error("API rejected file upload");
+            }
+
+            const result = await response.json();
+            const tour = scheduleData.find(t => t.id === tourId);
+            if (tour) {
+              tour.image = result.imageUrl;
+            }
+            
+            setConfigDirtyState(true);
+            closeChangeImageDialog();
+            renderConfigEditor();
+            showToast("Tour image uploaded and updated successfully");
+          } catch (err) {
+            console.error(err);
+            showToast("⚠️ Image upload failed: server error", true);
+          }
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Handle url input
+        const tour = scheduleData.find(t => t.id === tourId);
+        if (tour) {
+          tour.image = urlValue;
+        }
+        setConfigDirtyState(true);
+        closeChangeImageDialog();
+        renderConfigEditor();
+        showToast("Tour image path updated");
+      }
+    });
   }
 });

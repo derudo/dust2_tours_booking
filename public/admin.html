@@ -212,6 +212,11 @@
           <textarea id="new-session-desc" class="form-input text-area" rows="4" placeholder="Describe the tour route highlights and passenger requirements..." required></textarea>
         </div>
 
+        <div class="form-group">
+          <label for="new-session-image" class="form-label">Excursion Image URL (Optional)</label>
+          <input type="text" id="new-session-image" class="form-input" placeholder="e.g. images/tours/ct-sunset.jpg or paste web URL">
+        </div>
+
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" id="cancel-add-btn">Cancel</button>
           <button type="submit" class="btn btn-primary">Add Route to list</button>
@@ -259,6 +264,45 @@
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" id="cancel-timeslot-btn">Cancel</button>
           <button type="submit" class="btn btn-primary">Add Departure Slot</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Tour Image Dialog Modal -->
+  <div class="modal-overlay" id="change-image-modal" aria-hidden="true" role="dialog">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="close-image-modal-btn" aria-label="Close dialog">&times;</button>
+      
+      <div class="modal-header">
+        <span class="modal-subtitle">VISUAL MANAGER</span>
+        <h4 class="modal-title">Exchange Tour Image</h4>
+        <p class="modal-tour-meta">Upload a local file or paste a web URL for <strong id="image-target-tour-title">Tour</strong>.</p>
+      </div>
+      
+      <div class="vintage-divider mini">
+        <span class="divider-diamond"></span>
+      </div>
+      
+      <form class="booking-form" id="change-image-form">
+        <input type="hidden" id="image-target-tour-id">
+        
+        <div class="form-group">
+          <label class="form-label">Upload Image File</label>
+          <input type="file" id="new-image-file" class="form-input" accept="image/png, image/jpeg, image/webp" style="padding: 8px;">
+          <span class="form-help">Supported formats: PNG, JPG, WEBP. Max size 5MB.</span>
+        </div>
+        
+        <div style="text-align: center; margin: 12px 0; font-weight: bold; color: var(--text-muted); font-size: 11px;">— OR —</div>
+        
+        <div class="form-group">
+          <label for="new-image-url" class="form-label">Paste Image URL</label>
+          <input type="text" id="new-image-url" class="form-input" placeholder="e.g. images/tours/ct-sunset.jpg or web URL">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-image-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="save-image-btn">Update Tour Image</button>
         </div>
       </form>
     </div>
