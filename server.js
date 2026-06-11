@@ -12,6 +12,22 @@ const PORT = process.env.PORT || 3000;
 // Admin password configuration
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'dust2admin';
 
+// Path configurations
+const DATA_DIR = process.env.DATA_DIR || __dirname;
+
+// Ensure target data directory exists on startup
+if (!fs.existsSync(DATA_DIR)) {
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  } catch (err) {
+    console.error("Failed to initialize target data directory:", err);
+  }
+}
+
+const SCHEDULE_FILE = path.join(DATA_DIR, 'schedule.json');
+const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
+const EMAIL_LOG_FILE = path.join(DATA_DIR, 'sent_emails.log');
+
 // Enable CORS and JSON parsing
 app.use(cors());
 app.use(express.json());
@@ -28,22 +44,6 @@ app.use('/images/tours', express.static(CUSTOM_IMAGES_DIR));
 
 // Serve static frontend files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Path configurations
-const DATA_DIR = process.env.DATA_DIR || __dirname;
-
-// Ensure target data directory exists on startup
-if (!fs.existsSync(DATA_DIR)) {
-  try {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  } catch (err) {
-    console.error("Failed to initialize target data directory:", err);
-  }
-}
-
-const SCHEDULE_FILE = path.join(DATA_DIR, 'schedule.json');
-const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
-const EMAIL_LOG_FILE = path.join(DATA_DIR, 'sent_emails.log');
 
 // --- Security Middleware for Admin Access ---
 function checkAdminAuth(req, res, next) {
