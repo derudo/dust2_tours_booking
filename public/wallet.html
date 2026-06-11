@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#1A3322">
+  <meta name="theme-color" content="#00A95C">
   <title>DUST2 TOURS — Boarding Pass</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,10 +16,10 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --green-deep: #1A3322;
-      --green-mid: #264D35;
-      --green-light: #3A6B4A;
-      --pink: #DDA5A5;
+      --green-deep: #00A95C;
+      --green-mid: #00904E;
+      --green-light: #00C86D;
+      --pink: #DFB3D7;
       --cream: #FAF7F0;
       --cream-dim: #F0EDE5;
       --mono: 'DM Mono', 'Courier New', Courier, monospace;
@@ -38,7 +38,7 @@
     /* ── Background Texture ── */
     body {
       background:
-        radial-gradient(ellipse 120% 80% at 50% 0%, rgba(58,107,74,.35) 0%, transparent 60%),
+        radial-gradient(ellipse 120% 80% at 50% 0%, rgba(0,200,109,.35) 0%, transparent 60%),
         repeating-linear-gradient(
           0deg,
           transparent,
@@ -244,8 +244,8 @@
       border-radius: 16px;
       padding: 16px;
       box-shadow:
-        0 0 20px rgba(221,165,165,.2),
-        0 0 60px rgba(221,165,165,.08),
+        0 0 20px rgba(223,179,215,.2),
+        0 0 60px rgba(223,179,215,.08),
         0 2px 8px rgba(0,0,0,.06);
     }
 
@@ -520,7 +520,7 @@
     /* ── QR Code ── */
     const qrData = encodeURIComponent(bookingCode);
     document.getElementById('qrImg').src =
-      `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&color=1A3322&bgcolor=FFFFFF&margin=1`;
+      `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&color=00A95C&bgcolor=FFFFFF&margin=1`;
 
     /* ── Download as PNG ── */
     const btn = document.getElementById('btnDownload');

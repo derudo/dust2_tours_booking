@@ -886,7 +886,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scannerResultCard.style.display = 'block';
         scannerResultTitle.textContent = 'BOARDING PASSED';
         scannerResultDetails.innerHTML = `
-          <p style="color: #1A3322; font-weight: bold; margin-bottom: 6px;">✅ BOARDING SPAN COMPLETED SUCCESSFULLY!</p>
+          <p style="color: #00A95C; font-weight: bold; margin-bottom: 6px;">✅ BOARDING SPAN COMPLETED SUCCESSFULLY!</p>
           <div style="font-size: 12px; margin-top: 4px;">
             <strong>Ref Code:</strong> ${booking.bookingCode}<br>
             <strong>Passenger:</strong> ${booking.name}<br>

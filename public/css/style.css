@@ -5,32 +5,32 @@
 
 /* Variables & Theme Tokens */
 :root {
-  /* Rich Green-on-Dusty-Pink Harmony */
-  --bg-dusty-pink: #F3E3E0;      /* Rich, soft dusty pink base page background */
+  /* Rich Green-on-Rosa Harmony */
+  --bg-dusty-pink: #F4E4F1;      /* Rich, soft rosa base page background */
   --bg-cream: #FAF6F4;           /* Warm ivory cream for card contrasts */
-  --primary-green: #1A3322;      /* Elegant deep ink forest green */
-  --primary-green-light: #2D4C36;
-  --accent-pink: #DDA5A5;        /* Medium dusty pink highlights */
-  --accent-pink-dark: #C48E8E;   /* Deeper muted rose for interactive cues */
-  --accent-pink-light: #FCECE9;  /* Softest blush pink details */
+  --primary-green: #00A95C;      /* Elegant forest green */
+  --primary-green-light: #00C86D;
+  --accent-pink: #DFB3D7;        /* Medium pink highlights */
+  --accent-pink-dark: #C686BB;   /* Deeper muted rose for interactive cues */
+  --accent-pink-light: #F9EBF6;  /* Softest blush pink details */
   
-  --text-dark: #1A3322;          /* Rich ink brand color */
+  --text-dark: #00A95C;          /* Rich green brand color */
   --text-muted: #7A6F62;         /* Vintage warm grey */
-  --border-color: #1A3322;       /* High-contrast ink border */
+  --border-color: #00A95C;       /* High-contrast ink border */
   
   /* Fonts */
   --font-headings: 'Anton', Impact, sans-serif;
   --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   
   /* Vintage Shadows & Borders */
-  --shadow-retro: 6px 6px 0px 0px #1A3322;
-  --shadow-retro-hover: 10px 10px 0px 0px #1A3322;
-  --shadow-retro-pink: 6px 6px 0px 0px #DDA5A5;
-  --border-thin: 1px solid #1A3322;
-  --border-thick: 3px solid #1A3322;
-  --border-double: 5px double #1A3322;
-  --border-dashed: 2px dashed #1A3322;
-  --border-dotted: 2px dotted #1A3322;
+  --shadow-retro: 6px 6px 0px 0px var(--primary-green);
+  --shadow-retro-hover: 10px 10px 0px 0px var(--primary-green);
+  --shadow-retro-pink: 6px 6px 0px 0px var(--accent-pink);
+  --border-thin: 1px solid var(--primary-green);
+  --border-thick: 3px solid var(--primary-green);
+  --border-double: 5px double var(--primary-green);
+  --border-dashed: 2px dashed var(--primary-green);
+  --border-dotted: 2px dotted var(--primary-green);
 }
 
 /* Base Styles */
@@ -616,7 +616,7 @@ a {
 
 .btn-danger {
   background-color: #E27B7B;
-  color: #1A3322;
+  color: var(--primary-green);
   border-color: var(--primary-green);
 }
 .btn-danger:hover {

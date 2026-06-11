@@ -169,46 +169,46 @@ initMailer();
 
 async function sendBookingConfirmationEmail(booking, tour, slot) {
   const emailHtml = `
-    <div style="font-family: 'DM Sans', sans-serif; background-color: #FAF7F0; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; color: #1A3322; border: 3px solid #1A3322; box-shadow: 0 8px 0 rgba(26,51,34,0.15);">
-      <div style="text-align: center; border-bottom: 2px dashed #1A3322; padding-bottom: 20px; margin-bottom: 25px;">
-        <span style="font-family: 'Anton', Impact, sans-serif; font-size: 28px; letter-spacing: 2px; color: #1A3322; text-transform: uppercase;">DUST2 TOURS</span>
+    <div style="font-family: 'DM Sans', sans-serif; background-color: #FAF7F0; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; color: #00A95C; border: 3px solid #00A95C; box-shadow: 0 8px 0 rgba(0,169,92,0.15);">
+      <div style="text-align: center; border-bottom: 2px dashed #00A95C; padding-bottom: 20px; margin-bottom: 25px;">
+        <span style="font-family: 'Anton', Impact, sans-serif; font-size: 28px; letter-spacing: 2px; color: #00A95C; text-transform: uppercase;">DUST2 TOURS</span>
         <div style="font-size: 12px; letter-spacing: 1px; color: #8C8070; margin-top: 5px; text-transform: uppercase;">Est. 2026 • Official Boarding Pass</div>
       </div>
       
-      <div style="background-color: #DDA5A5; color: #1A3322; padding: 15px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 25px; letter-spacing: 0.5px;">
+      <div style="background-color: #DFB3D7; color: #00A95C; padding: 15px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 25px; letter-spacing: 0.5px;">
         CONFIRMED RESERVATION • PASSENGER TICKET
       </div>
       
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase; width: 40%;">Passenger Name</td>
-          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${booking.name}</td>
+          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #00A95C;">${booking.name}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Email Address</td>
-          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${booking.email}</td>
+          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #00A95C;">${booking.email}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Tour Route</td>
-          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${tour.title}</td>
+          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #00A95C;">${tour.title}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Departure Date</td>
-          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${slot.date}</td>
+          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #00A95C;">${slot.date}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Departure Time</td>
-          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #1A3322;">${slot.time}</td>
+          <td style="padding: 6px 0; font-size: 15px; font-weight: bold; color: #00A95C;">${slot.time}</td>
         </tr>
         <tr>
           <td style="padding: 6px 0; font-size: 13px; color: #8C8070; text-transform: uppercase;">Ticket Reference</td>
-          <td style="padding: 6px 0; font-size: 16px; font-family: monospace; font-weight: bold; color: #1A3322; letter-spacing: 1px;">${booking.bookingCode}</td>
+          <td style="padding: 6px 0; font-size: 16px; font-family: monospace; font-weight: bold; color: #00A95C; letter-spacing: 1px;">${booking.bookingCode}</td>
         </tr>
       </table>
       
-      <div style="border-top: 2px dashed #1A3322; padding-top: 20px; text-align: center; font-size: 12px; color: #8C8070;">
+      <div style="border-top: 2px dashed #00A95C; padding-top: 20px; text-align: center; font-size: 12px; color: #8C8070;">
         <p style="margin: 0 0 10px 0;">Please present this digital confirmation ticket or booking reference at the starting area (T Spawn or CT Spawn depending on route) 10 minutes prior to departure.</p>
-        <p style="margin: 0; font-weight: bold; color: #1A3322;">Thank you for choosing Dust2 Tours. Have a legendary expedition!</p>
+        <p style="margin: 0; font-weight: bold; color: #00A95C;">Thank you for choosing Dust2 Tours. Have a legendary expedition!</p>
       </div>
     </div>
   `;
