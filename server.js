@@ -175,7 +175,7 @@ async function sendBookingConfirmationEmail(booking, tour, slot) {
         <div style="font-size: 12px; letter-spacing: 1px; color: #8C8070; margin-top: 5px; text-transform: uppercase;">Est. 2026 • Official Boarding Pass</div>
       </div>
       
-      <div style="background-color: #DFB3D7; color: #00A95C; padding: 15px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 25px; letter-spacing: 0.5px;">
+      <div style="background-color: #00A95C; color: #FAF7F0; padding: 15px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 25px; letter-spacing: 0.5px;">
         CONFIRMED RESERVATION • PASSENGER TICKET
       </div>
       

@@ -204,17 +204,18 @@ a {
 }
 
 .admin-portal-btn {
-  background-color: var(--accent-pink);
-  color: var(--primary-green);
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
   padding: 8px 18px;
   border-radius: 4px;
   border: var(--border-thick);
+  border-color: var(--primary-green);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .admin-portal-btn:hover {
-  background-color: var(--bg-cream);
+  background-color: var(--accent-pink);
   color: var(--primary-green);
-  border-color: var(--bg-cream);
+  border-color: var(--accent-pink);
   transform: translateY(-3px);
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
@@ -533,13 +534,15 @@ a {
 
 /* Stamp Button Selected state */
 .timeslot-stamp-btn.selected {
-  background-color: var(--accent-pink); /* Dusty Pink as selected background! */
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
   border-style: solid;
   border-width: 2px;
-  box-shadow: 2px 2px 0 var(--primary-green);
+  border-color: var(--primary-green);
+  box-shadow: 2px 2px 0 var(--accent-pink);
 }
 .timeslot-stamp-btn.selected .slot-date {
-  color: var(--primary-green-light);
+  color: var(--accent-pink-light);
 }
 
 /* Stamp Button Booked state */
@@ -580,20 +583,23 @@ a {
   border: var(--border-thick);
 }
 
-/* Dusty Pink background for primary button */
+/* High Contrast Green background for primary button with retro pink shadow */
 .btn-primary {
-  background-color: var(--accent-pink);
-  color: var(--primary-green);
-  box-shadow: var(--shadow-retro);
+  background-color: var(--primary-green);
+  color: var(--bg-cream);
+  border-color: var(--primary-green);
+  box-shadow: var(--shadow-retro-pink);
 }
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--accent-pink-dark);
+  background-color: var(--primary-green-light);
+  color: #FFF;
+  border-color: var(--primary-green-light);
   transform: translate(-3px, -3px);
-  box-shadow: 8px 8px 0px 0px var(--primary-green);
+  box-shadow: 8px 8px 0px 0px var(--accent-pink-dark);
 }
 .btn-primary:active:not(:disabled) {
   transform: translate(0, 0);
-  box-shadow: 2px 2px 0px 0px var(--primary-green);
+  box-shadow: 2px 2px 0px 0px var(--accent-pink-dark);
 }
 .btn-primary:disabled {
   background-color: #DDD4D1;
@@ -603,15 +609,15 @@ a {
   cursor: not-allowed;
 }
 
-/* Deep Green background for secondary button */
+/* Hollow green outline design for secondary button */
 .btn-secondary {
-  background-color: var(--primary-green);
-  color: var(--bg-cream);
+  background-color: transparent;
+  color: var(--primary-green);
   border-color: var(--primary-green);
 }
 .btn-secondary:hover {
-  background-color: var(--primary-green-light);
-  color: #FFF;
+  background-color: var(--accent-pink-light);
+  color: var(--primary-green);
 }
 
 .btn-danger {
