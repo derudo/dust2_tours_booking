@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
           let badgeText = '';
           if (isFullyBooked) {
             badgeText = ' (Full)';
-          } else if (slot.remainingSlots <= 2) {
+          } else {
             badgeText = ` (${slot.remainingSlots} left)`;
           }
           
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
       slotsLeftWarning.style.backgroundColor = '#F0A5A5';
       slotsLeftWarning.style.color = '#5C1E1E';
     } else {
-      slotsLeftWarning.textContent = 'Only 5 slots total per departure. Secure yours now.';
+      slotsLeftWarning.textContent = `Only ${slot.remainingSlots} of ${slot.maxSlots || 5} slots available. Secure yours now.`;
       slotsLeftWarning.style.backgroundColor = 'var(--accent-pink-light)';
       slotsLeftWarning.style.color = 'var(--primary-green)';
     }
